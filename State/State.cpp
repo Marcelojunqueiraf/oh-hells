@@ -1,4 +1,5 @@
 #include "State.hpp"
+#include "../Componentes/Player/Player.hpp"
 
 State::State()
 {
@@ -14,21 +15,36 @@ void State::LoadAssets()
 {
   GameObject *go = new GameObject();
   std::weak_ptr<GameObject> goPtr = this->AddObject(go);
-  Sprite *bg = new Sprite("Assets/ocean.jpg", goPtr);
+  Sprite *bg = new Sprite("Assets/fundo.png", goPtr);
+  go->AddComponent(bg);
+  go->AddComponent(new CameraFollower(goPtr));
+
+  // Adicionando mapa
+  bg = new Sprite("Assets/mapa_portal_preguica.png", this->AddObject(new GameObject()));
+  bg->SetScaleX(4,4);
   go->AddComponent(bg);
 
-  CameraFollower *cameraFollower = new CameraFollower(goPtr);
-  go->AddComponent(cameraFollower);
 
   // music.Open("Assets/audio/stageState.ogg");
   // music.Play();
 
+  // go = new GameObject();
+  // goPtr = this->AddObject(go);
+  // go->AddComponent(new Sprite("Assets/minion.png", goPtr));
+  // go->box.x = 512;
+  // go->box.y = 300;
+
+
+
+
   go = new GameObject();
   goPtr = this->AddObject(go);
-  Sprite *sprite = new Sprite("Assets/minion.png", goPtr);
-  go->AddComponent(sprite);
+  go->AddComponent(new Player(goPtr));
   go->box.x = 512;
   go->box.y = 300;
+  Camera::GetInstance().Follow(go);
+  
+
 }
 
 void State::Update(float dt)

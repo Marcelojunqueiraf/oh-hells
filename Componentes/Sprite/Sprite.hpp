@@ -21,6 +21,7 @@ private:
   float timeElapsed;
   float frameTime;
 
+
 public:
   Sprite(std::weak_ptr<GameObject> associated);
   Sprite(std::string file, std::weak_ptr<GameObject> associated, int frameCount = 1, float frameTime = 1);
@@ -44,4 +45,6 @@ public:
   void SetFrame(int frame);
   void SetFrameCount(int frameCount);
   void SetFrameTime(float frameTime);
+
+  bool show = true;
 };

@@ -56,15 +56,17 @@ void Sprite::SetClip(int x, int y, int w, int h)
 
 void Sprite::Render(int x, int y)
 {
-  SDL_Rect dstrect;
-  Camera &camera = Camera::GetInstance();
-  dstrect.x = x - camera.pos.x;
-  dstrect.y = y - camera.pos.y;
-  dstrect.w = clipRect.w * scale.x;
-  dstrect.h = clipRect.h * scale.y;
-  float angle = associated.expired() ? 0 : associated.lock()->angle;
-  angle = angle * 180 / M_PI;
-  SDL_RenderCopyEx(Game::GetInstance()->GetRenderer().lock().get(), texture, &clipRect, &dstrect, angle, nullptr, SDL_FLIP_NONE);
+  if(show){
+    SDL_Rect dstrect;
+    Camera &camera = Camera::GetInstance();
+    dstrect.x = x - camera.pos.x;
+    dstrect.y = y - camera.pos.y;
+    dstrect.w = clipRect.w * scale.x;
+    dstrect.h = clipRect.h * scale.y;
+    float angle = associated.expired() ? 0 : associated.lock()->angle;
+    angle = angle * 180 / M_PI;
+    SDL_RenderCopyEx(Game::GetInstance()->GetRenderer().lock().get(), texture, &clipRect, &dstrect, angle, nullptr, SDL_FLIP_NONE);
+  }
 }
 
 int Sprite::GetWidth()
@@ -84,12 +86,14 @@ bool Sprite::IsOpen()
 
 void Sprite::Update(float dt)
 {
-  timeElapsed += dt;
-  if (timeElapsed > frameTime)
-  {
-    timeElapsed -= frameTime;
-    currentFrame = (currentFrame + 1) % frameCount;
-    SetFrame(currentFrame);
+  if(show){
+    timeElapsed += dt;
+    if (timeElapsed > frameTime)
+    {
+      timeElapsed -= frameTime;
+      currentFrame = (currentFrame + 1) % frameCount;
+      SetFrame(currentFrame);
+    }
   }
 }
 
