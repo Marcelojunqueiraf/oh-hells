@@ -1,7 +1,5 @@
 #include "Player.hpp"
 
-#define PI 3.14159265359
-
 #define WALK_SPEED 5
 
 Player *Player::player = nullptr;
@@ -21,19 +19,24 @@ Player::Player(std::weak_ptr<GameObject> associated) : Component(associated),
     walk_back->SetScaleX(3, 3);
     walk_front = new Sprite("Assets/Eli_front_walk.png", associated, 6, 0.1);
     walk_front->SetScaleX(3, 3);
+    hit_animation = new Sprite("Assets/Eli_front_hit.png", associated, 4, 0.1);
+    hit_animation->SetScaleX(3, 3);
 
     walk_left->show = false;
     walk_right->show = false;
     walk_back->show = false;
     walk_front->show = false;
+    hit_animation->show = false;
     associated.lock()->AddComponent(stand_straight);
     associated.lock()->AddComponent(walk_left);
     associated.lock()->AddComponent(walk_right);
     associated.lock()->AddComponent(walk_back);
     associated.lock()->AddComponent(walk_front);
+    associated.lock()->AddComponent(hit_animation);
     player = this;
     last_animation = stand_straight;
     shootCooldown = Timer();
+    hitTimer = Timer();
 }
 
 Player::~Player()
@@ -47,6 +50,19 @@ void Player::Start()
 
 void Player::Update(float dt)
 {
+    hitTimer.Update(dt);
+    shootCooldown.Update(dt);
+
+    if (hitTimer.Get() < 0.4f)
+    {
+        return;
+    }
+
+    if (hp <= 0)
+    {
+        associated.lock()->RequestDelete();
+    }
+
     InputManager &input = InputManager::GetInstance();
 
     bool up = input.IsKeyDown(SDLK_w);
@@ -69,7 +85,6 @@ void Player::Update(float dt)
         bulletGO->AddComponent(bullet);
         shootCooldown.Restart();
     }
-    shootCooldown.Update(dt);
 
     if (up | down | left | right)
     {
@@ -133,4 +148,17 @@ bool Player::Is(std::string type)
 Vec2 Player::Position()
 {
     return associated.lock()->box.GetCenter();
+}
+
+void Player::NotifyCollision(std::weak_ptr<GameObject> other)
+{
+    Bullet *bullet = (Bullet *)other.lock()->GetComponent("Bullet").lock().get();
+    if (bullet != nullptr && bullet->targetPlayer)
+    {
+        hp -= bullet->GetDamage();
+        last_animation->show = false;
+        hit_animation->show = true;
+        last_animation = hit_animation;
+        hitTimer.Restart();
+    }
 }

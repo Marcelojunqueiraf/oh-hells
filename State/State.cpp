@@ -35,15 +35,13 @@ void State::LoadAssets()
   go->box.y = 300;
   go->AddComponent(new Collider(goPtr, {0.3, 0.3}, {64, 72}));
   Camera::GetInstance().Follow(go);
+
   go = new GameObject();
   goPtr = this->AddObject(go);
   go->AddComponent(new Enemy(goPtr, 10));
-  Sprite *enemySprite = new Sprite("Assets/Eli_front_idle.png", goPtr, 12, 0.1);
-  go->AddComponent(enemySprite);
-  enemySprite->SetScaleX(3, 3);
   go->AddComponent(new Collider(goPtr, {0.3, 0.3}, {64, 72}));
-  go->box.x = 600;
-  go->box.y = 400;
+  go->box.x = 250;
+  go->box.y = 550;
 }
 
 void State::Update(float dt)

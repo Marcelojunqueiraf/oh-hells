@@ -22,15 +22,16 @@ public:
     void Render();
     bool Is(std::string type);
     static Player *player;
-    void NotifyCollision(GameObject &other);
+    void NotifyCollision(std::weak_ptr<GameObject> other);
     Vec2 Position();
 
 private:
     Sprite *stand_straight;
-    Sprite *walk_left, *walk_right, *walk_back, *walk_front;
+    Sprite *walk_left, *walk_right, *walk_back, *walk_front, *hit_animation;
     Vec2 speed;
     float linearSpeed;
     float angle;
     int hp;
     Timer shootCooldown;
+    Timer hitTimer;
 };
