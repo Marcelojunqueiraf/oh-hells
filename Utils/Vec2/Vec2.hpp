@@ -10,6 +10,7 @@ public:
   Vec2 operator+(Vec2 v);
   Vec2 operator-(Vec2 v);
   Vec2 operator*(float n);
+  Vec2 operator*(const float rhs) const;
   Vec2 operator/(float n);
   float magnitude();
   Vec2 normalize();

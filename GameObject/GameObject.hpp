@@ -27,4 +27,5 @@ public:
   void AddComponent(Component *cpt);
   void RemoveComponent(Component *cpt);
   std::weak_ptr<Component> GetComponent(std::string type);
+  void NotifyCollision(std::weak_ptr<GameObject> other);
 };

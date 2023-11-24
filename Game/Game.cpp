@@ -19,7 +19,7 @@ Game::Game(std::string title, int width, int height)
     std::terminate();
   }
 
-  if (Mix_Init(MIX_INIT_OGG) != MIX_INIT_OGG)
+  if (Mix_Init((MIX_INIT_OGG | MIX_INIT_MP3)) != (MIX_INIT_OGG | MIX_INIT_MP3))
   {
     std::cerr << SDL_GetError() << std::endl;
     std::terminate();

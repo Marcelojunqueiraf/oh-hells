@@ -1,5 +1,6 @@
 #include "State.hpp"
 #include "../Componentes/Player/Player.hpp"
+#include "../Utils/Collision/Collision.cpp"
 
 State::State()
 {
@@ -21,30 +22,28 @@ void State::LoadAssets()
 
   // Adicionando mapa
   bg = new Sprite("Assets/mapa_portal_preguica.png", this->AddObject(new GameObject()));
-  bg->SetScaleX(4,4);
+  bg->SetScaleX(4, 4);
   go->AddComponent(bg);
 
-
-  // music.Open("Assets/audio/stageState.ogg");
-  // music.Play();
-
-  // go = new GameObject();
-  // goPtr = this->AddObject(go);
-  // go->AddComponent(new Sprite("Assets/minion.png", goPtr));
-  // go->box.x = 512;
-  // go->box.y = 300;
-
-
-
+  music.Open("Assets/stageState.ogg");
+  music.Play();
 
   go = new GameObject();
   goPtr = this->AddObject(go);
   go->AddComponent(new Player(goPtr));
   go->box.x = 512;
   go->box.y = 300;
+  go->AddComponent(new Collider(goPtr, {0.3, 0.3}, {64, 72}));
   Camera::GetInstance().Follow(go);
-  
-
+  go = new GameObject();
+  goPtr = this->AddObject(go);
+  go->AddComponent(new Enemy(goPtr, 10));
+  Sprite *enemySprite = new Sprite("Assets/Eli_front_idle.png", goPtr, 12, 0.1);
+  go->AddComponent(enemySprite);
+  enemySprite->SetScaleX(3, 3);
+  go->AddComponent(new Collider(goPtr, {0.3, 0.3}, {64, 72}));
+  go->box.x = 600;
+  go->box.y = 400;
 }
 
 void State::Update(float dt)
@@ -70,6 +69,38 @@ void State::Update(float dt)
     else
     {
       objectArray[i]->Update(dt);
+    }
+  }
+
+  for (int i = 0; i < objectArray.size(); i++)
+  {
+    std::weak_ptr<GameObject> go = objectArray[i];
+    if (auto lock = go.lock())
+    {
+      for (int j = i + 1; j < objectArray.size(); j++)
+      {
+        if (i == j)
+          continue;
+        std::weak_ptr<GameObject> other = objectArray[j];
+        if (auto lockOther = other.lock())
+        {
+          std::weak_ptr<Component> collider = lock->GetComponent("Collider");
+          std::weak_ptr<Component> otherCollider = lockOther->GetComponent("Collider");
+          if (auto lockCollider = collider.lock())
+          {
+            if (auto lockOtherCollider = otherCollider.lock())
+            {
+              Collider *colliderComponent = (Collider *)lockCollider.get();
+              Collider *otherColliderComponent = (Collider *)lockOtherCollider.get();
+              if (Collision::IsColliding(colliderComponent->box, otherColliderComponent->box, lock->angle, lockOther->angle))
+              {
+                lock->NotifyCollision(other);
+                lockOther->NotifyCollision(go);
+              }
+            }
+          }
+        }
+      }
     }
   }
 }

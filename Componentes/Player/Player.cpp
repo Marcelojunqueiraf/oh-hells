@@ -33,6 +33,7 @@ Player::Player(std::weak_ptr<GameObject> associated) : Component(associated),
     associated.lock()->AddComponent(walk_front);
     player = this;
     last_animation = stand_straight;
+    shootCooldown = Timer();
 }
 
 Player::~Player()
@@ -46,11 +47,29 @@ void Player::Start()
 
 void Player::Update(float dt)
 {
+    InputManager &input = InputManager::GetInstance();
 
-    bool up = InputManager::GetInstance().IsKeyDown(SDLK_w);
-    bool down = InputManager::GetInstance().IsKeyDown(SDLK_s);
-    bool left = InputManager::GetInstance().IsKeyDown(SDLK_a);
-    bool right = InputManager::GetInstance().IsKeyDown(SDLK_d);
+    bool up = input.IsKeyDown(SDLK_w);
+    bool down = input.IsKeyDown(SDLK_s);
+    bool left = input.IsKeyDown(SDLK_a);
+    bool right = input.IsKeyDown(SDLK_d);
+
+    if (shootCooldown.Get() > 0.3f && input.IsMouseDown(1))
+    {
+        GameObject *bulletGO = new GameObject();
+        bulletGO->box.x = this->associated.lock()->box.GetCenter().x;
+        bulletGO->box.y = this->associated.lock()->box.GetCenter().y;
+        std::weak_ptr<GameObject> bulletPtr = Game::GetInstance()->GetCurrentState().lock()->AddObject(bulletGO);
+
+        // get mouse direction
+        Vec2 distance = Vec2(input.GetMouseX(), input.GetMouseY()) - this->associated.lock()->box.GetCenter();
+
+        float angle = distance.getAngle();
+        Bullet *bullet = new Bullet(bulletPtr, angle, 500, 10, 1000, "Assets/minionbullet2.png", false);
+        bulletGO->AddComponent(bullet);
+        shootCooldown.Restart();
+    }
+    shootCooldown.Update(dt);
 
     if (up | down | left | right)
     {

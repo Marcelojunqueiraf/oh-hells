@@ -82,3 +82,11 @@ void GameObject::Start()
   }
   started = true;
 }
+
+void GameObject::NotifyCollision(std::weak_ptr<GameObject> other)
+{
+  for (auto component : this->components)
+  {
+    component.get()->NotifyCollision(other);
+  }
+}

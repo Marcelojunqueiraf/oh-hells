@@ -12,8 +12,9 @@ protected:
 public:
   Component(std::weak_ptr<GameObject> associated);
   virtual ~Component();
-  virtual void Update(float dt) = 0;
-  virtual void Render() = 0;
-  virtual void Start() = 0;
+  virtual void Update(float dt);
+  virtual void Render();
+  virtual void Start();
   virtual bool Is(std::string type) = 0;
+  virtual void NotifyCollision(std::weak_ptr<GameObject> other);
 };

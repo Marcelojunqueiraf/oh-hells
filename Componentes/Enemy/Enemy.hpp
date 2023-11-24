@@ -11,26 +11,16 @@
 
 #include <memory>
 
-class Player : public Component
+class Enemy : public Component
 {
 
 public:
-    Player(std::weak_ptr<GameObject> associated);
-    ~Player();
-    void Start();
+    Enemy(std::weak_ptr<GameObject> associated, int hp);
+    ~Enemy();
     void Update(float dt);
-    void Render();
     bool Is(std::string type);
-    static Player *player;
-    void NotifyCollision(GameObject &other);
-    Vec2 Position();
+    void NotifyCollision(std::weak_ptr<GameObject> other);
 
 private:
-    Sprite *stand_straight;
-    Sprite *walk_left, *walk_right, *walk_back, *walk_front;
-    Vec2 speed;
-    float linearSpeed;
-    float angle;
     int hp;
-    Timer shootCooldown;
 };
