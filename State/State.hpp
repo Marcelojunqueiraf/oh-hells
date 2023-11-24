@@ -16,7 +16,7 @@
 #include "../Componentes/CameraFollower/CameraFollower.hpp"
 #include "../Utils/InputManager/InputManager.hpp"
 #include "../Camera/Camera.hpp"
-#include "../Componentes/Enemy/Enemy.hpp"
+#include "../Componentes/Enemies/Minion/Minion.hpp"
 
 class State
 {

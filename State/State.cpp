@@ -38,8 +38,7 @@ void State::LoadAssets()
 
   go = new GameObject();
   goPtr = this->AddObject(go);
-  go->AddComponent(new Enemy(goPtr, 10));
-  go->AddComponent(new Collider(goPtr, {0.3, 0.3}, {64, 72}));
+  go->AddComponent(new Minion(goPtr));
   go->box.x = 250;
   go->box.y = 550;
 }
