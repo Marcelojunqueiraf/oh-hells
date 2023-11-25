@@ -22,6 +22,7 @@ Sound::~Sound()
 void Sound::Play(int times)
 {
   this->channel = Mix_PlayChannel(-1, this->chunk, times - 1);
+  Mix_Volume(this->channel, volume);
 }
 
 void Sound::Stop()
@@ -42,6 +43,10 @@ void Sound::Open(std::string file)
 bool Sound::IsOpen()
 {
   return this->chunk != nullptr;
+}
+
+void Sound::Volume(int volume){
+  this->volume = volume; 
 }
 
 void Sound::Update(float dt)

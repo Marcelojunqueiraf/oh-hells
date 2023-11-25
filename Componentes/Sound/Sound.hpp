@@ -13,6 +13,7 @@ class Sound : public Component
 private:
   Mix_Chunk *chunk;
   int channel;
+  int volume = 64;
 
 public:
   Sound(std::weak_ptr<GameObject> associated);
@@ -23,6 +24,7 @@ public:
   void Stop();
   void Open(std::string file);
   bool IsOpen();
+  void Volume(int volume);
 
   void Update(float dt);
   void Render();

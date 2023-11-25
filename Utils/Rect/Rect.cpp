@@ -32,3 +32,8 @@ Vec2 Rect::GetCenter()
 {
   return Vec2(this->x + this->w / 2, this->y + this->h / 2);
 }
+
+void Rect::operator+=(const Vec2& v) {
+	x += v.x;
+	y += v.y;
+}

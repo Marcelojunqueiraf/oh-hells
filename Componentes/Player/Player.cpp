@@ -1,6 +1,8 @@
 #include "Player.hpp"
 
+#define DASH_SPEED 60
 #define WALK_SPEED 5
+#define ATTACK_SPEED 0.7f
 
 Player *Player::player = nullptr;
 
@@ -21,20 +23,45 @@ Player::Player(std::weak_ptr<GameObject> associated) : Component(associated),
     walk_front->SetScaleX(3, 3);
     hit_animation = new Sprite("Assets/Eli_front_hit.png", associated, 4, 0.1);
     hit_animation->SetScaleX(3, 3);
+    left_attack_animation = new Sprite("Assets/Eli_left_attack.png", associated, 7, ATTACK_SPEED/7);
+    left_attack_animation->SetScaleX(3, 3);
+    right_attack_animation = new Sprite("Assets/Eli_right_attack.png", associated, 7, ATTACK_SPEED/7);
+    right_attack_animation->SetScaleX(3, 3);
+    back_attack_animation = new Sprite("Assets/Eli_back_attack.png", associated, 7, ATTACK_SPEED/7);
+    back_attack_animation->SetScaleX(3, 3);
+    front_attack_animation = new Sprite("Assets/Eli_front_attack.png", associated, 7, ATTACK_SPEED/7);
+    front_attack_animation->SetScaleX(3, 3);
+
+    hit_sound = new Sound("Assets/dano.ogg", associated);
+    hit_sound->Volume(16);
+    sword_attack_sound = new Sound("Assets/espada.ogg", associated);
+    
 
     walk_left->show = false;
     walk_right->show = false;
     walk_back->show = false;
     walk_front->show = false;
+
+    left_attack_animation->show = false;
+    right_attack_animation->show = false;
+    back_attack_animation->show = false;
+    front_attack_animation->show = false;
+
     hit_animation->show = false;
+
     associated.lock()->AddComponent(stand_straight);
     associated.lock()->AddComponent(walk_left);
     associated.lock()->AddComponent(walk_right);
     associated.lock()->AddComponent(walk_back);
     associated.lock()->AddComponent(walk_front);
     associated.lock()->AddComponent(hit_animation);
+    associated.lock()->AddComponent(left_attack_animation);
+    associated.lock()->AddComponent(right_attack_animation);
+    associated.lock()->AddComponent(front_attack_animation);
+    associated.lock()->AddComponent(back_attack_animation);
     player = this;
     last_animation = stand_straight;
+    attackCooldown = Timer();
     shootCooldown = Timer();
     hitTimer = Timer();
 }
@@ -48,13 +75,27 @@ void Player::Start()
 {
 }
 
+void Player::ShowSprite(Sprite * spr){
+    last_animation->show = false;
+    spr->show = true;
+    last_animation = spr;
+}
+
 void Player::Update(float dt)
 {
     hitTimer.Update(dt);
     shootCooldown.Update(dt);
+    attackCooldown.Update(dt);
+    
 
     if (hitTimer.Get() < 0.4f)
     {
+        return;
+    }
+
+    if(dashed && attackCooldown.Get() > 0.2f){
+        dashed = false;
+        associated.lock()->box += dash_direction;
         return;
     }
 
@@ -81,28 +122,49 @@ void Player::Update(float dt)
         Vec2 distance = Vec2(input.GetMouseX(), input.GetMouseY()) - this->associated.lock()->box.GetCenter();
 
         float angle = distance.getAngle();
-        Bullet *bullet = new Bullet(bulletPtr, angle, 500, 10, 1000, "Assets/minionbullet2.png", false);
+        Bullet *bullet = new Bullet(bulletPtr, angle, 500, 10, 1000, "Assets/Eli_bullet.png", false);
         bulletGO->AddComponent(bullet);
         shootCooldown.Restart();
     }
 
-    if (up | down | left | right)
+    if(input.IsKeyDown(SDLK_SPACE) && attackCooldown.Get() > ATTACK_SPEED){
+
+        dash_direction = {0,0};
+
+        if (left){
+            dash_direction.x -= DASH_SPEED;
+            ShowSprite(left_attack_animation);
+        }
+        else if (right){
+            dash_direction.x += DASH_SPEED;
+            ShowSprite(right_attack_animation);
+        }
+        else if(up) {
+            dash_direction.y -= DASH_SPEED;
+            ShowSprite(back_attack_animation);
+        }
+        else{
+            dash_direction.y += DASH_SPEED;
+            ShowSprite(front_attack_animation);
+        }
+
+        dashed = true;
+        attackCooldown.Restart();
+        sword_attack_sound->Play();
+    }
+    else if ((up || down || left || right) && attackCooldown.Get() > ATTACK_SPEED)
     {
         if (up)
         {
             associated.lock()->box.y -= WALK_SPEED;
-            last_animation->show = false;
-            walk_back->show = true;
-            last_animation = walk_back;
+            ShowSprite(walk_back);
             if (associated.lock()->box.x < 0)
                 associated.lock()->box.x = 0;
         }
         else if (down)
         {
             associated.lock()->box.y += WALK_SPEED;
-            last_animation->show = false;
-            walk_front->show = true;
-            last_animation = walk_front;
+            ShowSprite(walk_front);
             if (associated.lock()->box.y > 1800)
                 associated.lock()->box.y = 1800;
         }
@@ -110,9 +172,7 @@ void Player::Update(float dt)
         if (left)
         {
             associated.lock()->box.x -= WALK_SPEED;
-            last_animation->show = false;
-            walk_left->show = true;
-            last_animation = walk_left;
+            ShowSprite(walk_left);
 
             if (associated.lock()->box.x < 0)
                 associated.lock()->box.x = 0;
@@ -120,9 +180,7 @@ void Player::Update(float dt)
         else if (right)
         {
             associated.lock()->box.x += WALK_SPEED;
-            last_animation->show = false;
-            walk_right->show = true;
-            last_animation = walk_right;
+            ShowSprite(walk_right);
 
             if (associated.lock()->box.x > 1800)
                 associated.lock()->box.x = 1800;
@@ -130,9 +188,10 @@ void Player::Update(float dt)
     }
     else
     {
-        last_animation->show = false;
-        stand_straight->show = true;
-        last_animation = stand_straight;
+        if(attackCooldown.Get() < 0.7f){
+            return;
+        }
+        ShowSprite(stand_straight);
     }
 }
 
@@ -156,9 +215,9 @@ void Player::NotifyCollision(std::weak_ptr<GameObject> other)
     if (bullet != nullptr && bullet->targetPlayer)
     {
         hp -= bullet->GetDamage();
-        last_animation->show = false;
-        hit_animation->show = true;
-        last_animation = hit_animation;
+
+        ShowSprite(hit_animation);
         hitTimer.Restart();
+        hit_sound->Play();
     }
 }

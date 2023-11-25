@@ -1,4 +1,5 @@
 #include "State.hpp"
+#include "../Componentes/Enemy/Enemy.hpp"
 #include "../Componentes/Player/Player.hpp"
 #include "../Utils/Collision/Collision.cpp"
 
@@ -25,7 +26,9 @@ void State::LoadAssets()
   bg->SetScaleX(4, 4);
   go->AddComponent(bg);
 
-  music.Open("Assets/stageState.ogg");
+
+  // music.Open("Assets/Eli_memoria.ogg");
+  music.Open("Assets/Luxuria1.ogg");
   music.Play();
 
   go = new GameObject();
@@ -38,9 +41,10 @@ void State::LoadAssets()
 
   go = new GameObject();
   goPtr = this->AddObject(go);
-  go->AddComponent(new Minion(goPtr));
-  go->box.x = 250;
-  go->box.y = 550;
+  go->AddComponent(new Enemy(goPtr, 100));
+  go->AddComponent(new Collider(goPtr, {0.3, 0.3}, {64, 72}));
+  go->box.x = 300;
+  go->box.y = 500;
 }
 
 void State::Update(float dt)
