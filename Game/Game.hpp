@@ -2,6 +2,7 @@
 
 #define INCLUDE_SDL_IMAGE
 #define INCLUDE_SDL_MIXER
+#define INCLUDE_SDL_TTF
 #include "../SDL_include.h"
 #include "../States/State/State.hpp"
 #include "../Utils/InputManager/InputManager.hpp"
@@ -28,8 +29,6 @@ private:
   void CalculateDeltaTime();
   Game(std::string title, int width, int height);
 
-
-
 public:
   static Game *GetInstance();
   void Run();
@@ -39,4 +38,5 @@ public:
   int GetHeight();
   ~Game();
   State& GetCurrentState();
+
 };

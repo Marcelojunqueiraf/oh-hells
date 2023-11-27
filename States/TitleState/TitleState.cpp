@@ -10,12 +10,12 @@
 TitleState::TitleState() {
     auto bg = new GameObject;
     auto bg_ptr = AddObject(bg);
-    bg->AddComponent(new Sprite("img/title.jpg", bg_ptr));
+    bg->AddComponent(new Sprite("Assets/fundo.png", bg_ptr));
     bg->AddComponent(new CameraFollower(bg_ptr));
 
     auto text_go = new GameObject;
     auto text_go_ptr = AddObject(text_go);
-    Text *text = new Text("font/Call me maybe.ttf", text_go_ptr, 30, Text::SOLID, "Pressione ESPACO para jogar...", {0, 0, 0, 255});
+    Text *text = new Text("Assets/Ubuntu-Regular.ttf", text_go_ptr, 30, Text::SOLID, "Pressione ESPACO para jogar...", {0, 0, 0, 255});
     text_go->AddComponent(text);
     Rect &fontBox = text_go->box;
     fontBox.x = GAME_WIDTH/2 - fontBox.w/2;

@@ -37,6 +37,14 @@ Game::Game(std::string title, int width, int height)
     std::cerr << SDL_GetError() << std::endl;
     std::terminate();
   }
+
+
+  if (TTF_Init() != 0)
+  {
+    std::cerr << SDL_GetError() << std::endl;
+    std::terminate();
+  }
+
   auto window = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, 0);
   if (window == nullptr)
   {
@@ -74,10 +82,7 @@ void Game::Run()
 		while (!stateStack.top()->QuitRequested() && !stateStack.empty()) {
 			if (stateStack.top()->PopRequested()) {
 				stateStack.pop();
-				Resources::ClearImages();
-				Resources::ClearMusics();
-				Resources::ClearSounds();
-				// Resources::ClearFonts();
+				// Resources::ClearResources();
 				if (!stateStack.empty()) {
 					stateStack.top()->Resume();
 				}
@@ -105,10 +110,7 @@ void Game::Run()
 		stateStack.pop();
 	}
 
-	Resources::ClearSounds();
-	Resources::ClearMusics();
-	Resources::ClearImages();
-	// Resources::ClearFonts();
+  Resources::ClearResources();
 }
 
 Game::~Game()
