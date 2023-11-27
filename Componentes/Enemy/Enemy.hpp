@@ -31,5 +31,4 @@ private:
     Timer shootCooldown;
     Timer hitTimer;
     Sprite *idle_animation, *hit_animation;
-    Sprite *last_animation;
 };

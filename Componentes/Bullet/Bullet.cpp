@@ -8,7 +8,7 @@ Bullet::Bullet(std::weak_ptr<GameObject> associated, float angle, float speed, i
   this->damage = damage;
   this->targetPlayer = targetPlayer;
 
-  Sprite *spriteComponent = new Sprite(sprite, associated, 4, 0.2);
+  Sprite *spriteComponent = new Sprite(sprite, associated, 4, 0.1);
   spriteComponent->SetScaleX(2,2);
 
   this->associated.lock()->AddComponent(spriteComponent);

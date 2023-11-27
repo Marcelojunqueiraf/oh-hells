@@ -59,21 +59,22 @@ void State::Update(float dt)
     quitRequested = true;
   }
 
-  for (int i = 0; i < objectArray.size(); i++)
+  for (size_t i = 0; i < objectArray.size(); i++)
   {
-    std::weak_ptr<GameObject> go = objectArray[i];
+    objectArray[i]->Update(dt);
+  }
 
+  for (size_t i = 0; i < objectArray.size(); i++)
+  {
     if (objectArray[i]->IsDead())
     {
       objectArray.erase(objectArray.begin() + i);
     }
-    else
-    {
-      objectArray[i]->Update(dt);
-    }
   }
 
-  for (int i = 0; i < objectArray.size(); i++)
+  
+
+  for (size_t i = 0; i < objectArray.size(); i++)
   {
     std::weak_ptr<GameObject> go = objectArray[i];
     if (auto lock = go.lock())
