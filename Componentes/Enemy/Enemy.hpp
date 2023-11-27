@@ -1,9 +1,9 @@
 #pragma once
 
+#include "../../Game/Game.hpp"
 #include "../Component/Component.hpp"
 #include "../Sprite/Sprite.hpp"
 #include "../Sound/Sound.hpp"
-#include "../../Game/Game.hpp"
 #include "../../Utils/InputManager/InputManager.hpp"
 #include "../../Camera/Camera.hpp"
 #include "../Bullet/Bullet.hpp"

@@ -49,7 +49,7 @@ void Enemy::Update(float dt)
         GameObject *bulletGO = new GameObject();
         bulletGO->box.x = this->associated.lock()->box.GetCenter().x;
         bulletGO->box.y = this->associated.lock()->box.GetCenter().y;
-        std::weak_ptr<GameObject> bulletPtr = Game::GetInstance()->GetCurrentState().lock()->AddObject(bulletGO);
+        std::weak_ptr<GameObject> bulletPtr = Game::GetInstance()->GetCurrentState().AddObject(bulletGO);
 
         // get mouse direction
         Vec2 distance = Camera::GetInstance().pos + Vec2(512, 300) - this->associated.lock()->box.GetCenter();

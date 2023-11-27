@@ -1,4 +1,5 @@
 #include "Sprite.hpp"
+#include "../../Camera/Camera.hpp"
 
 Sprite::Sprite(std::weak_ptr<GameObject> associated) : Component(associated)
 {

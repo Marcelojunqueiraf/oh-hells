@@ -1,4 +1,4 @@
-Componentes/Enemies/Minion/Minion.d bin/Minion.o: \
+Componentes/Enemies/Minion/Minion.d Minion.o: \
  Componentes/Enemies/Minion/Minion.cpp /usr/include/stdc-predef.h \
  Componentes/Enemies/Minion/Minion.hpp \
  Componentes/Enemies/Minion/../../Component/Component.hpp \
@@ -301,10 +301,10 @@ Componentes/Enemies/Minion/Minion.d bin/Minion.o: \
  /usr/include/SDL2/SDL_mixer.h \
  Componentes/Enemies/Minion/../../Sprite/../../Game/Game.hpp \
  Componentes/Enemies/Minion/../../Sprite/../../Game/../SDL_include.h \
- Componentes/Enemies/Minion/../../Sprite/../../Game/../State/State.hpp \
- Componentes/Enemies/Minion/../../Sprite/../../Game/../State/../SDL_include.h \
- Componentes/Enemies/Minion/../../Sprite/../../Game/../State/../Music/Music.hpp \
- Componentes/Enemies/Minion/../../Sprite/../../Game/../State/../Music/../SDL_include.h \
+ Componentes/Enemies/Minion/../../Sprite/../../Game/../States/State/State.hpp \
+ Componentes/Enemies/Minion/../../Sprite/../../Game/../States/State/../../SDL_include.h \
+ Componentes/Enemies/Minion/../../Sprite/../../Game/../States/State/../../Music/Music.hpp \
+ Componentes/Enemies/Minion/../../Sprite/../../Game/../States/State/../../Music/../SDL_include.h \
  /usr/include/c++/11/iostream /usr/include/c++/11/ostream \
  /usr/include/c++/11/ios /usr/include/c++/11/bits/ios_base.h \
  /usr/include/c++/11/bits/locale_classes.h \
@@ -323,24 +323,26 @@ Componentes/Enemies/Minion/Minion.d bin/Minion.o: \
  /usr/include/c++/11/bits/basic_ios.tcc \
  /usr/include/c++/11/bits/ostream.tcc /usr/include/c++/11/istream \
  /usr/include/c++/11/bits/istream.tcc \
- Componentes/Enemies/Minion/../../Sprite/../../Game/../State/../Componentes/Sound/Sound.hpp \
- Componentes/Enemies/Minion/../../Sprite/../../Game/../State/../Componentes/Sound/../../SDL_include.h \
- Componentes/Enemies/Minion/../../Sprite/../../Game/../State/../Componentes/Sound/../../Utils/Resources/Resources.hpp \
+ Componentes/Enemies/Minion/../../Sprite/../../Game/../States/State/../../Componentes/Collider/Collider.hpp \
+ Componentes/Enemies/Minion/../../Sprite/../../Game/../Utils/InputManager/InputManager.hpp \
+ Componentes/Enemies/Minion/../../Sprite/../../Game/../Utils/InputManager/../../SDL_include.h \
  /usr/include/c++/11/unordered_map /usr/include/c++/11/bits/hashtable.h \
  /usr/include/c++/11/bits/hashtable_policy.h \
  /usr/include/c++/11/bits/enable_special_members.h \
  /usr/include/c++/11/bits/node_handle.h \
  /usr/include/c++/11/bits/unordered_map.h \
  /usr/include/c++/11/bits/erase_if.h \
- Componentes/Enemies/Minion/../../Sprite/../../Game/../State/../Componentes/Sound/../../Utils/Resources/../../SDL_include.h \
- Componentes/Enemies/Minion/../../Sprite/../../Game/../State/../Componentes/CameraFollower/CameraFollower.hpp \
- Componentes/Enemies/Minion/../../Sprite/../../Game/../State/../Componentes/CameraFollower/../../Camera/Camera.hpp \
- Componentes/Enemies/Minion/../../Sprite/../../Game/../State/../Componentes/CameraFollower/../../Camera/../Utils/InputManager/InputManager.hpp \
- Componentes/Enemies/Minion/../../Sprite/../../Game/../State/../Componentes/CameraFollower/../../Camera/../Utils/InputManager/../../SDL_include.h \
+ Componentes/Enemies/Minion/../../Sprite/../../Game/../Utils/InputManager/../../Camera/Camera.hpp \
+ /usr/include/c++/11/stack /usr/include/c++/11/deque \
+ /usr/include/c++/11/bits/stl_deque.h /usr/include/c++/11/bits/deque.tcc \
+ /usr/include/c++/11/bits/stl_stack.h \
+ Componentes/Enemies/Minion/../../Sprite/../../Utils/Resources/Resources.hpp \
+ Componentes/Enemies/Minion/../../Sprite/../../Utils/Resources/../../SDL_include.h \
  Componentes/Enemies/Minion/../../Bullet/Bullet.hpp \
- Componentes/Enemies/Minion/../../Bullet/../Collider/Collider.hpp \
  Componentes/Enemies/Minion/../../../Utils/Timer/Timer.hpp \
- Componentes/Enemies/Minion/../../Enemy/Enemy.hpp
+ Componentes/Enemies/Minion/../../Enemy/Enemy.hpp \
+ Componentes/Enemies/Minion/../../Enemy/../Sound/Sound.hpp \
+ Componentes/Enemies/Minion/../../Enemy/../Sound/../../SDL_include.h
 /usr/include/stdc-predef.h:
 Componentes/Enemies/Minion/Minion.hpp:
 Componentes/Enemies/Minion/../../Component/Component.hpp:
@@ -702,10 +704,10 @@ Componentes/Enemies/Minion/../../Sprite/../../SDL_include.h:
 /usr/include/SDL2/SDL_mixer.h:
 Componentes/Enemies/Minion/../../Sprite/../../Game/Game.hpp:
 Componentes/Enemies/Minion/../../Sprite/../../Game/../SDL_include.h:
-Componentes/Enemies/Minion/../../Sprite/../../Game/../State/State.hpp:
-Componentes/Enemies/Minion/../../Sprite/../../Game/../State/../SDL_include.h:
-Componentes/Enemies/Minion/../../Sprite/../../Game/../State/../Music/Music.hpp:
-Componentes/Enemies/Minion/../../Sprite/../../Game/../State/../Music/../SDL_include.h:
+Componentes/Enemies/Minion/../../Sprite/../../Game/../States/State/State.hpp:
+Componentes/Enemies/Minion/../../Sprite/../../Game/../States/State/../../SDL_include.h:
+Componentes/Enemies/Minion/../../Sprite/../../Game/../States/State/../../Music/Music.hpp:
+Componentes/Enemies/Minion/../../Sprite/../../Game/../States/State/../../Music/../SDL_include.h:
 /usr/include/c++/11/iostream:
 /usr/include/c++/11/ostream:
 /usr/include/c++/11/ios:
@@ -730,9 +732,9 @@ Componentes/Enemies/Minion/../../Sprite/../../Game/../State/../Music/../SDL_incl
 /usr/include/c++/11/bits/ostream.tcc:
 /usr/include/c++/11/istream:
 /usr/include/c++/11/bits/istream.tcc:
-Componentes/Enemies/Minion/../../Sprite/../../Game/../State/../Componentes/Sound/Sound.hpp:
-Componentes/Enemies/Minion/../../Sprite/../../Game/../State/../Componentes/Sound/../../SDL_include.h:
-Componentes/Enemies/Minion/../../Sprite/../../Game/../State/../Componentes/Sound/../../Utils/Resources/Resources.hpp:
+Componentes/Enemies/Minion/../../Sprite/../../Game/../States/State/../../Componentes/Collider/Collider.hpp:
+Componentes/Enemies/Minion/../../Sprite/../../Game/../Utils/InputManager/InputManager.hpp:
+Componentes/Enemies/Minion/../../Sprite/../../Game/../Utils/InputManager/../../SDL_include.h:
 /usr/include/c++/11/unordered_map:
 /usr/include/c++/11/bits/hashtable.h:
 /usr/include/c++/11/bits/hashtable_policy.h:
@@ -740,12 +742,16 @@ Componentes/Enemies/Minion/../../Sprite/../../Game/../State/../Componentes/Sound
 /usr/include/c++/11/bits/node_handle.h:
 /usr/include/c++/11/bits/unordered_map.h:
 /usr/include/c++/11/bits/erase_if.h:
-Componentes/Enemies/Minion/../../Sprite/../../Game/../State/../Componentes/Sound/../../Utils/Resources/../../SDL_include.h:
-Componentes/Enemies/Minion/../../Sprite/../../Game/../State/../Componentes/CameraFollower/CameraFollower.hpp:
-Componentes/Enemies/Minion/../../Sprite/../../Game/../State/../Componentes/CameraFollower/../../Camera/Camera.hpp:
-Componentes/Enemies/Minion/../../Sprite/../../Game/../State/../Componentes/CameraFollower/../../Camera/../Utils/InputManager/InputManager.hpp:
-Componentes/Enemies/Minion/../../Sprite/../../Game/../State/../Componentes/CameraFollower/../../Camera/../Utils/InputManager/../../SDL_include.h:
+Componentes/Enemies/Minion/../../Sprite/../../Game/../Utils/InputManager/../../Camera/Camera.hpp:
+/usr/include/c++/11/stack:
+/usr/include/c++/11/deque:
+/usr/include/c++/11/bits/stl_deque.h:
+/usr/include/c++/11/bits/deque.tcc:
+/usr/include/c++/11/bits/stl_stack.h:
+Componentes/Enemies/Minion/../../Sprite/../../Utils/Resources/Resources.hpp:
+Componentes/Enemies/Minion/../../Sprite/../../Utils/Resources/../../SDL_include.h:
 Componentes/Enemies/Minion/../../Bullet/Bullet.hpp:
-Componentes/Enemies/Minion/../../Bullet/../Collider/Collider.hpp:
 Componentes/Enemies/Minion/../../../Utils/Timer/Timer.hpp:
 Componentes/Enemies/Minion/../../Enemy/Enemy.hpp:
+Componentes/Enemies/Minion/../../Enemy/../Sound/Sound.hpp:
+Componentes/Enemies/Minion/../../Enemy/../Sound/../../SDL_include.h:

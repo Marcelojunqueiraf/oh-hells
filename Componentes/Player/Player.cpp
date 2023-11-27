@@ -106,7 +106,7 @@ void Player::Update(float dt)
             GameObject *bulletGO = new GameObject();
             bulletGO->box.x = this->associated.lock()->box.GetCenter().x;
             bulletGO->box.y = this->associated.lock()->box.GetCenter().y;
-            std::weak_ptr<GameObject> bulletPtr = Game::GetInstance()->GetCurrentState().lock()->AddObject(bulletGO);
+            std::weak_ptr<GameObject> bulletPtr = Game::GetInstance()->GetCurrentState().AddObject(bulletGO);
 
             // get mouse direction
             Vec2 distance = Vec2(input.GetMouseX(), input.GetMouseY()) - this->associated.lock()->box.GetCenter();
@@ -121,6 +121,14 @@ void Player::Update(float dt)
 
             state = DASHING;
             dash_direction = {0,0};
+            if(up) {
+                dash_direction.y -= DASH_SPEED;
+                ShowSprite(back_attack_animation);
+            }
+            else if (down){
+                dash_direction.y += DASH_SPEED;
+                ShowSprite(front_attack_animation);
+            }
 
             if (left){
                 dash_direction.x -= DASH_SPEED;
@@ -130,14 +138,7 @@ void Player::Update(float dt)
                 dash_direction.x += DASH_SPEED;
                 ShowSprite(right_attack_animation);
             }
-            else if(up) {
-                dash_direction.y -= DASH_SPEED;
-                ShowSprite(back_attack_animation);
-            }
-            else{
-                dash_direction.y += DASH_SPEED;
-                ShowSprite(front_attack_animation);
-            }
+            
             attackCooldown.Restart();
             sword_attack_sound->Play();
         }

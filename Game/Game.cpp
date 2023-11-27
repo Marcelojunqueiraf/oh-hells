@@ -60,31 +60,64 @@ Game *Game::GetInstance()
 {
   if (Game::instance == nullptr)
   {
-    Game::instance = new Game("Oh hells", 1024, 600);
+    Game::instance = new Game("Oh hells", GAME_WIDTH, GAME_HEIGHT);
   }
   return Game::instance;
 }
 
-void Game::run()
+void Game::Run()
 {
-  state = std::make_shared<State>();
-  state->Start();
+  if (storedState != nullptr) {
+		stateStack.emplace(storedState);
+		storedState = nullptr;
+		stateStack.top()->Start();
+		while (!stateStack.top()->QuitRequested() && !stateStack.empty()) {
+			if (stateStack.top()->PopRequested()) {
+				stateStack.pop();
+				Resources::ClearImages();
+				Resources::ClearMusics();
+				Resources::ClearSounds();
+				// Resources::ClearFonts();
+				if (!stateStack.empty()) {
+					stateStack.top()->Resume();
+				}
+			}
 
-  bool running = true;
-  while (running)
-  {
-    this->CalculateDeltaTime();
-    state->Update(this->dt);
-    state->Render();
+			if (storedState != nullptr) {
+				if(!stateStack.empty()) stateStack.top()->Pause();
+				stateStack.emplace(storedState);
+				storedState = nullptr;
+				stateStack.top()->Start();
+			}
 
-    if (state->QuitRequested())
-      running = false;
-    SDL_Delay(33);
-  }
+			if (stateStack.empty()) break;
+
+			CalculateDeltaTime();
+			InputManager::GetInstance().Update();
+			stateStack.top()->Update(dt);
+			stateStack.top()->Render();
+			SDL_RenderPresent(renderer.get());
+			SDL_Delay(33);
+		}
+	}
+
+	while (!stateStack.empty()) {
+		stateStack.pop();
+	}
+
+	Resources::ClearSounds();
+	Resources::ClearMusics();
+	Resources::ClearImages();
+	// Resources::ClearFonts();
 }
 
 Game::~Game()
 {
+	// Deletar State
+	if (storedState != nullptr) {
+		delete storedState;
+	}
+
   Mix_CloseAudio();
   Mix_Quit();
   IMG_Quit();
@@ -112,12 +145,16 @@ int Game::GetHeight()
   return h;
 }
 
+void Game::Push(State *state) {
+    storedState = state;
+}
+
 std::weak_ptr<SDL_Renderer> Game::GetRenderer()
 {
   return renderer;
 }
 
-std::weak_ptr<State> Game::GetCurrentState()
+State& Game::GetCurrentState()
 {
-  return state;
+  return *(stateStack.top().get());
 }

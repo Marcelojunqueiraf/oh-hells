@@ -2,6 +2,7 @@
 
 #define INCLUDE_SDL_IMAGE
 #define INCLUDE_SDL_MIXER
+#define INCLUDE_SDL_TTF
 
 #include <unordered_map>
 #include <iostream>
@@ -15,6 +16,7 @@ private:
   static std::unordered_map<std::string, SDL_Texture *> imageTable;
   static std::unordered_map<std::string, Mix_Music *> musicTable;
   static std::unordered_map<std::string, Mix_Chunk *> audioTable;
+  static std::unordered_map<std::string, TTF_Font *> fontTable;
 
 public:
   static SDL_Texture *GetImage(std::string file);
@@ -25,6 +27,9 @@ public:
 
   static Mix_Chunk *GetSound(std::string file);
   static void ClearSounds();
+
+  static TTF_Font *GetFont(std::string file, int ptsize);
+  static void ClearFonts();
 
   static void ClearResources();
 };

@@ -44,7 +44,14 @@
     "stdexcept": "cpp",
     "streambuf": "cpp",
     "cinttypes": "cpp",
-    "typeinfo": "cpp"
+    "typeinfo": "cpp",
+    "cstring": "cpp",
+    "hash_map": "cpp",
+    "compare": "cpp",
+    "concepts": "cpp",
+    "list": "cpp",
+    "numbers": "cpp",
+    "ranges": "cpp"
   },
   "files.exclude": {
     "**/*.d": true,
