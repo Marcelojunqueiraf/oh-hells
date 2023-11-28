@@ -31,7 +31,6 @@ public:
     void Update(float dt);
     void Render();
     bool Is(std::string type);
-    static Player *player;
     void NotifyCollision(std::weak_ptr<GameObject> other);
     Vec2 Position();
     void ShowSprite(Sprite *spr);

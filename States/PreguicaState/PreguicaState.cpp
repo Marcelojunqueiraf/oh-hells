@@ -1,11 +1,11 @@
-#include "LuxuriaState.hpp"
+#include "PreguicaState.hpp"
 #include "../../Camera/Camera.hpp"
 #include "../../Utils/Collision/Collision.cpp"
-#include "../../Componentes/Luxuria/Luxuria.hpp"
+#include "../../Componentes/Preguica/Preguica.hpp"
 #include "../../Componentes/Player/Player.hpp"
 #include "../../Componentes/CameraFollower/CameraFollower.hpp"
 
-LuxuriaState::LuxuriaState()
+PreguicaState::PreguicaState()
 {
   GameObject *go = new GameObject();
   std::weak_ptr<GameObject> goPtr = this->AddObject(go);
@@ -14,7 +14,7 @@ LuxuriaState::LuxuriaState()
   go->AddComponent(new CameraFollower(goPtr));
 
   // Adicionando mapa
-  bg = new Sprite("Assets/mapa_portal_preguica.png", this->AddObject(new GameObject()));
+  bg = new Sprite("Assets/mapa_preguica_2.png", this->AddObject(new GameObject()));
   bg->SetScaleX(4, 4);
   go->AddComponent(bg);
 
@@ -28,22 +28,22 @@ LuxuriaState::LuxuriaState()
 
   go = new GameObject();
   goPtr = this->AddObject(go);
-  go->AddComponent(new Luxuria(goPtr, 100));
+  go->AddComponent(new Preguica(goPtr, 100));
   go->AddComponent(new Collider(goPtr, {0.3, 0.3}, {64, 72}));
   go->box.x = 300;
   go->box.y = 500;
 }
 
-LuxuriaState::~LuxuriaState()
+PreguicaState::~PreguicaState()
 {
     objectArray.clear();
 }
 
-void LuxuriaState::LoadAssets() {
-	backgroundMusic.Open("Assets/Luxuria1.ogg");
+void PreguicaState::LoadAssets() {
+	backgroundMusic.Open("Assets/Eli_memoria.ogg");
 }
 
-void LuxuriaState::Update(float dt)
+void PreguicaState::Update(float dt)
 {
   
     Camera::GetInstance().Update(dt);
@@ -54,10 +54,6 @@ void LuxuriaState::Update(float dt)
 
     popRequested = input_manager.KeyPress(ESCAPE_KEY);
 
-    if(popRequested)
-        backgroundMusic.Stop();
-
-
     UpdateArray(dt);
 
     /* Verifica aqui se o jogo acabou */
@@ -65,14 +61,14 @@ void LuxuriaState::Update(float dt)
     VerifyCollision();
 }
 
-void LuxuriaState::Render()
+void PreguicaState::Render()
 {
     for (auto &it : objectArray) {
         it->Render();
     }
 }
 
-void LuxuriaState::Start()
+void PreguicaState::Start()
 {
   StartArray();
   LoadAssets();
@@ -80,10 +76,6 @@ void LuxuriaState::Start()
 }
 
 
-void LuxuriaState::Pause() {
-    backgroundMusic.Stop();
-}
+void PreguicaState::Pause() {}
 
-void LuxuriaState::Resume() {
-    backgroundMusic.Play();
-}
+void PreguicaState::Resume() {}

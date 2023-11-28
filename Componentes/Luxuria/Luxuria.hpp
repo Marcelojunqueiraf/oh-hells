@@ -13,12 +13,12 @@
 
 class Sprite;
 
-class Enemy : public Component
+class Luxuria : public Component
 {
 
 public:
-    Enemy(std::weak_ptr<GameObject> associated, int hp);
-    ~Enemy();
+    Luxuria(std::weak_ptr<GameObject> associated, int hp);
+    ~Luxuria();
     void Update(float dt);
     bool Is(std::string type);
     void NotifyCollision(std::weak_ptr<GameObject> other);

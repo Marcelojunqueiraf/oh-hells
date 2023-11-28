@@ -1,11 +1,13 @@
 #pragma once
 
 #include "../State/State.hpp"
+#include "../../Componentes/Preguica/Preguica.hpp"
+#include "../../Componentes/Player/Player.hpp"
 
-class LuxuriaState : public State {
+class PreguicaState : public State {
 public:
-    LuxuriaState ();
-    ~LuxuriaState();
+    PreguicaState ();
+    ~PreguicaState();
 
     void LoadAssets () override;
     void Update (float dt) override;

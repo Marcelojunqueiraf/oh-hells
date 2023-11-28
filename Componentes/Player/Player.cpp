@@ -4,7 +4,6 @@
 #define WALK_SPEED 5
 #define ATTACK_SPEED 0.7f
 
-Player *Player::player = nullptr;
 
 static Sprite *last_animation = nullptr;
 
@@ -62,7 +61,6 @@ Player::Player(std::weak_ptr<GameObject> associated) : Component(associated),
     associated.lock()->AddComponent(back_attack_animation);
     associated.lock()->AddComponent(hit_animation);
     associated.lock()->AddComponent(death_animation);
-    player = this;
     last_animation = stand_straight;
     attackCooldown = Timer();
     shootCooldown = Timer();
@@ -71,7 +69,6 @@ Player::Player(std::weak_ptr<GameObject> associated) : Component(associated),
 
 Player::~Player()
 {
-    player = nullptr;
 }
 
 void Player::Start()

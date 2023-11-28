@@ -1,4 +1,4 @@
-#include "Enemy.hpp"
+#include "Luxuria.hpp"
 
 #define PI 3.14159265359
 
@@ -6,7 +6,7 @@
 
 static Sprite *last_animation = nullptr;
 
-Enemy::Enemy(std::weak_ptr<GameObject> associated, int hp) : Component(associated), hp(100)
+Luxuria::Luxuria(std::weak_ptr<GameObject> associated, int hp) : Component(associated), hp(100)
 {
     hit_animation = new Sprite("Assets/Luxuria_front_hit.png", associated, 6, 0.1);
     hit_animation->SetScaleX(3, 3);
@@ -22,11 +22,11 @@ Enemy::Enemy(std::weak_ptr<GameObject> associated, int hp) : Component(associate
     hitTimer = Timer();
 }
 
-Enemy::~Enemy()
+Luxuria::~Luxuria()
 {
 }
 
-void Enemy::Update(float dt)
+void Luxuria::Update(float dt)
 {
 
     hitTimer.Update(dt);
@@ -63,12 +63,12 @@ void Enemy::Update(float dt)
     ShowSprite(idle_animation);
 }
 
-bool Enemy::Is(std::string type)
+bool Luxuria::Is(std::string type)
 {
-    return type == "Enemy";
+    return type == "Luxuria";
 }
 
-void Enemy::NotifyCollision(std::weak_ptr<GameObject> other)
+void Luxuria::NotifyCollision(std::weak_ptr<GameObject> other)
 {
     Bullet *bullet = (Bullet *)other.lock()->GetComponent("Bullet").lock().get();
     if (bullet != nullptr && !bullet->targetPlayer)
@@ -80,18 +80,18 @@ void Enemy::NotifyCollision(std::weak_ptr<GameObject> other)
 }
 
 
-int Enemy::GetHp()
+int Luxuria::GetHp()
 {
     return hp;
 }
 
-void Enemy::TakeDamage(int damage)
+void Luxuria::TakeDamage(int damage)
 {
     hp -= damage;
 }
 
 
-void Enemy::ShowSprite(Sprite * spr){
+void Luxuria::ShowSprite(Sprite * spr){
     last_animation->show = false;
     spr->show = true;
     last_animation = spr;
