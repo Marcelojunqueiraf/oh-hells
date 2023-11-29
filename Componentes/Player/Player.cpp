@@ -3,7 +3,7 @@
 #define DASH_SPEED 15
 #define WALK_SPEED 5
 #define ATTACK_SPEED 0.7f
-
+#define ATTACK_DISTANCE 350
 
 static Sprite *last_animation = nullptr;
 
@@ -22,13 +22,13 @@ Player::Player(std::weak_ptr<GameObject> associated) : Component(associated),
     walk_front->SetScaleX(3, 3);
     hit_animation = new Sprite("Assets/Eli_front_hit.png", associated, 4, 0.1);
     hit_animation->SetScaleX(3, 3);
-    left_attack_animation = new Sprite("Assets/Eli_left_attack.png", associated, 7, ATTACK_SPEED/7);
+    left_attack_animation = new Sprite("Assets/Eli_left_attack.png", associated, 7, ATTACK_SPEED / 7);
     left_attack_animation->SetScaleX(3, 3);
-    right_attack_animation = new Sprite("Assets/Eli_right_attack.png", associated, 7, ATTACK_SPEED/7);
+    right_attack_animation = new Sprite("Assets/Eli_right_attack.png", associated, 7, ATTACK_SPEED / 7);
     right_attack_animation->SetScaleX(3, 3);
-    back_attack_animation = new Sprite("Assets/Eli_back_attack.png", associated, 7, ATTACK_SPEED/7);
+    back_attack_animation = new Sprite("Assets/Eli_back_attack.png", associated, 7, ATTACK_SPEED / 7);
     back_attack_animation->SetScaleX(3, 3);
-    front_attack_animation = new Sprite("Assets/Eli_front_attack.png", associated, 7, ATTACK_SPEED/7);
+    front_attack_animation = new Sprite("Assets/Eli_front_attack.png", associated, 7, ATTACK_SPEED / 7);
     front_attack_animation->SetScaleX(3, 3);
     death_animation = new Sprite("Assets/Eli_death.png", associated, 8, 0.1);
     death_animation->SetScaleX(3, 3);
@@ -75,7 +75,8 @@ void Player::Start()
 {
 }
 
-void Player::ShowSprite(Sprite * spr){
+void Player::ShowSprite(Sprite *spr)
+{
     last_animation->show = false;
     spr->show = true;
     last_animation = spr;
@@ -98,44 +99,53 @@ void Player::Update(float dt)
     {
     case (RESTING):
 
-        if(shootCooldown.Get() > 0.3f && input.IsMouseDown(1)){
-            // state = SHOOTING;
+        if (shootCooldown.Get() > 0.3f && input.IsMouseDown(1))
+        {
+
             GameObject *bulletGO = new GameObject();
             bulletGO->box.x = this->associated.lock()->box.GetCenter().x;
             bulletGO->box.y = this->associated.lock()->box.GetCenter().y;
             std::weak_ptr<GameObject> bulletPtr = Game::GetInstance()->GetCurrentState().AddObject(bulletGO);
 
-            // get mouse direction
-            Vec2 distance = Vec2(input.GetMouseX(), input.GetMouseY()) - this->associated.lock()->box.GetCenter();
+            Vec2 target = Vec2(input.GetMouseX(), input.GetMouseY());
+            Vec2 origin = this->associated.lock()->box.GetCenter();
 
-            float angle = distance.getAngle();
-            Bullet *bullet = new Bullet(bulletPtr, angle, 500, 10, 1000, "Assets/Eli_bullet.png", false);
+            Vec2 distance = target - origin;
+            distance = distance.normalize();
+            target = origin + distance * ATTACK_DISTANCE;
+
+            Boomerang *bullet = new Boomerang(bulletPtr, target, 500, 10, "Assets/Eli_bullet.png", this->associated, false);
             bulletGO->AddComponent(bullet);
             shootCooldown.Restart();
         }
 
-        if(input.IsKeyDown(SDLK_SPACE) && attackCooldown.Get() > ATTACK_SPEED){
+        if (input.IsMouseDown(3) && attackCooldown.Get() > ATTACK_SPEED)
+        {
 
             state = DASHING;
-            dash_direction = {0,0};
-            if(up) {
+            dash_direction = {0, 0};
+            if (up)
+            {
                 dash_direction.y -= DASH_SPEED;
                 ShowSprite(back_attack_animation);
             }
-            else if (down){
+            else if (down)
+            {
                 dash_direction.y += DASH_SPEED;
                 ShowSprite(front_attack_animation);
             }
 
-            if (left){
+            if (left)
+            {
                 dash_direction.x -= DASH_SPEED;
                 ShowSprite(left_attack_animation);
             }
-            else if (right){
+            else if (right)
+            {
                 dash_direction.x += DASH_SPEED;
                 ShowSprite(right_attack_animation);
             }
-            
+
             attackCooldown.Restart();
             sword_attack_sound->Play();
         }
@@ -186,9 +196,9 @@ void Player::Update(float dt)
         state = RESTING;
 
     case (DASHING):
-        if(attackCooldown.Get() > 0.7f)
+        if (attackCooldown.Get() > 0.7f)
             state = RESTING;
-        else if(attackCooldown.Get() < 0.2f)
+        else if (attackCooldown.Get() < 0.2f)
             associated.lock()->box += dash_direction;
         break;
 
@@ -197,11 +207,11 @@ void Player::Update(float dt)
             state = RESTING;
         break;
     case (DEAD):
-        if( hitTimer.Get() > 0.79f)
+        if (hitTimer.Get() > 0.79f)
             associated.lock()->RequestDelete();
         break;
 
-    default:  // State Default = RESTING
+    default: // State Default = RESTING
         state = RESTING;
         ShowSprite(stand_straight);
         break;
@@ -242,6 +252,4 @@ void Player::NotifyCollision(std::weak_ptr<GameObject> other)
             ShowSprite(hit_animation);
         }
     }
-
-    
 }

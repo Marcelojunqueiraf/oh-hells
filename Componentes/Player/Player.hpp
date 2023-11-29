@@ -7,6 +7,7 @@
 #include "../../Utils/InputManager/InputManager.hpp"
 #include "../../Camera/Camera.hpp"
 #include "../Bullet/Bullet.hpp"
+#include "../Boomerang/Boomerang.hpp"
 #include "../../Utils/Timer/Timer.hpp"
 
 #include <memory>
@@ -34,7 +35,6 @@ public:
     void NotifyCollision(std::weak_ptr<GameObject> other);
     Vec2 Position();
     void ShowSprite(Sprite *spr);
-
 
 private:
     Sprite *stand_straight, *death_animation;

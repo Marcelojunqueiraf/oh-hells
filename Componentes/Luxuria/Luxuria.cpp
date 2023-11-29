@@ -55,7 +55,7 @@ void Luxuria::Update(float dt)
         Vec2 distance = Camera::GetInstance().pos + Vec2(512, 300) - this->associated.lock()->box.GetCenter();
 
         float angle = distance.getAngle();
-        Bullet *bullet = new Bullet(bulletPtr, angle, 500, 10, 1000, "Assets/Luxuria_bullet.png", true);
+        Bullet *bullet = new RegularBullet(bulletPtr, angle, 500, 10, 1000, "Assets/Luxuria_bullet.png", true);
         bulletGO->AddComponent(bullet);
         shootCooldown.Restart();
     }
@@ -73,12 +73,11 @@ void Luxuria::NotifyCollision(std::weak_ptr<GameObject> other)
     Bullet *bullet = (Bullet *)other.lock()->GetComponent("Bullet").lock().get();
     if (bullet != nullptr && !bullet->targetPlayer)
     {
-        hp -= bullet->GetDamage();
+        TakeDamage(bullet->GetDamage());
         ShowSprite(hit_animation);
         hitTimer.Restart();
     }
 }
-
 
 int Luxuria::GetHp()
 {
@@ -87,11 +86,14 @@ int Luxuria::GetHp()
 
 void Luxuria::TakeDamage(int damage)
 {
+    if (hitTimer.Get() < 0.4f)
+        return;
+    std::cout << "Luxuria took " << damage << " damage" << std::endl;
     hp -= damage;
 }
 
-
-void Luxuria::ShowSprite(Sprite * spr){
+void Luxuria::ShowSprite(Sprite *spr)
+{
     last_animation->show = false;
     spr->show = true;
     last_animation = spr;

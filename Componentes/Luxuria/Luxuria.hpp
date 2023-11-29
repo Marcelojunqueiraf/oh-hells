@@ -6,7 +6,7 @@
 #include "../Sound/Sound.hpp"
 #include "../../Utils/InputManager/InputManager.hpp"
 #include "../../Camera/Camera.hpp"
-#include "../Bullet/Bullet.hpp"
+#include "../RegularBullet/RegularBullet.hpp"
 #include "../../Utils/Timer/Timer.hpp"
 
 #include <memory>
@@ -22,7 +22,7 @@ public:
     void Update(float dt);
     bool Is(std::string type);
     void NotifyCollision(std::weak_ptr<GameObject> other);
-    void ShowSprite(Sprite * spr);
+    void ShowSprite(Sprite *spr);
     int GetHp();
     void TakeDamage(int damage);
 
