@@ -5,6 +5,12 @@
 #include "../Componentes/Component/Component.hpp"
 #include "../Utils/Rect/Rect.hpp"
 
+
+enum DepthMode{
+  Normal,
+  Dynamic
+};
+
 class Component;
 
 class GameObject
@@ -15,6 +21,7 @@ private:
   std::vector<std::shared_ptr<Component>> components;
 
 public:
+  DepthMode Depth = Normal;
   Rect box;
   float angle;
   GameObject();

@@ -13,6 +13,8 @@ private:
 public:
   Vec2 speed;
   Vec2 pos;
+  Rect max_view;
+  void SetView(Rect max_view);
   void Follow(GameObject *newFocus);
   void Unfollow();
   void Update(float dt);

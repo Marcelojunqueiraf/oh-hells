@@ -35,8 +35,11 @@ public:
     void NotifyCollision(std::weak_ptr<GameObject> other);
     Vec2 Position();
     void ShowSprite(Sprite *spr);
+    void SetView(Rect max_view);
 
 private:
+    Rect max_view;
+
     Sprite *stand_straight, *death_animation;
     Sprite *walk_left, *walk_right, *walk_back, *walk_front, *hit_animation;
     Sprite *left_attack_animation, *right_attack_animation, *front_attack_animation, *back_attack_animation;

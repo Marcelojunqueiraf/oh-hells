@@ -6,7 +6,8 @@
 
 static Sprite *last_animation = nullptr;
 
-Luxuria::Luxuria(std::weak_ptr<GameObject> associated, int hp) : Component(associated), hp(100)
+Luxuria::Luxuria(std::weak_ptr<GameObject> associated, int hp, std::weak_ptr<GameObject> player_go) :
+ Component(associated), hp(100), player_go(player_go)
 {
     hit_animation = new Sprite("Assets/Luxuria_front_hit.png", associated, 6, 0.1);
     hit_animation->SetScaleX(3, 3);
@@ -46,18 +47,21 @@ void Luxuria::Update(float dt)
 
     if (shootCooldown.Get() > 1.5f)
     {
-        GameObject *bulletGO = new GameObject();
-        bulletGO->box.x = this->associated.lock()->box.GetCenter().x;
-        bulletGO->box.y = this->associated.lock()->box.GetCenter().y;
-        std::weak_ptr<GameObject> bulletPtr = Game::GetInstance()->GetCurrentState().AddObject(bulletGO);
+        if(!player_go.expired()){
+            GameObject *bulletGO = new GameObject();
+            bulletGO->box.x = this->associated.lock()->box.GetCenter().x;
+            bulletGO->box.y = this->associated.lock()->box.GetCenter().y;
+            std::weak_ptr<GameObject> bulletPtr = Game::GetInstance()->GetCurrentState().AddObject(bulletGO);
 
-        // get mouse direction
-        Vec2 distance = Camera::GetInstance().pos + Vec2(512, 300) - this->associated.lock()->box.GetCenter();
+            // get mouse direction
+            Vec2 player_pos = player_go.lock()->box.GetCenter();
+            Vec2 distance = player_pos - this->associated.lock()->box.GetCenter();
 
-        float angle = distance.getAngle();
-        Bullet *bullet = new RegularBullet(bulletPtr, angle, 500, 10, 1000, "Assets/Luxuria_bullet.png", true);
-        bulletGO->AddComponent(bullet);
-        shootCooldown.Restart();
+            float angle = distance.getAngle();
+            Bullet *bullet = new RegularBullet(bulletPtr, angle, 500, 10, 1000, "Assets/Luxuria_bullet.png", true);
+            bulletGO->AddComponent(bullet);
+            shootCooldown.Restart();
+        }
     }
 
     ShowSprite(idle_animation);

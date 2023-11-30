@@ -5,6 +5,11 @@
 #define ATTACK_SPEED 0.7f
 #define ATTACK_DISTANCE 350
 
+#define SCALE 3
+#define SPRITE_WIDTH SCALE*64
+#define SPRITE_HEIGHT SCALE*64
+#define SPRITE_WHITE_SPACE SCALE*24
+
 static Sprite *last_animation = nullptr;
 
 Player::Player(std::weak_ptr<GameObject> associated) : Component(associated),
@@ -82,6 +87,11 @@ void Player::ShowSprite(Sprite *spr)
     last_animation = spr;
 }
 
+
+void Player::SetView(Rect max_view){
+    this->max_view = max_view;
+}
+
 void Player::Update(float dt)
 {
     hitTimer.Update(dt);
@@ -94,6 +104,9 @@ void Player::Update(float dt)
     bool down = input.IsKeyDown(SDLK_s);
     bool left = input.IsKeyDown(SDLK_a);
     bool right = input.IsKeyDown(SDLK_d);
+
+
+    Rect& player_pos = associated.lock()->box;
 
     switch (state)
     {
@@ -155,32 +168,22 @@ void Player::Update(float dt)
             {
                 associated.lock()->box.y -= WALK_SPEED;
                 ShowSprite(walk_back);
-                if (associated.lock()->box.x < 0)
-                    associated.lock()->box.x = 0;
             }
             else if (down)
             {
                 associated.lock()->box.y += WALK_SPEED;
                 ShowSprite(walk_front);
-                if (associated.lock()->box.y > 1800)
-                    associated.lock()->box.y = 1800;
             }
 
             if (left)
             {
                 associated.lock()->box.x -= WALK_SPEED;
                 ShowSprite(walk_left);
-
-                if (associated.lock()->box.x < 0)
-                    associated.lock()->box.x = 0;
             }
             else if (right)
             {
                 associated.lock()->box.x += WALK_SPEED;
                 ShowSprite(walk_right);
-
-                if (associated.lock()->box.x > 1800)
-                    associated.lock()->box.x = 1800;
             }
         }
         else
@@ -216,6 +219,18 @@ void Player::Update(float dt)
         ShowSprite(stand_straight);
         break;
     }
+
+    player_pos.x = (player_pos.x < max_view.x-SPRITE_WHITE_SPACE) ? 
+    max_view.x-SPRITE_WHITE_SPACE : player_pos.x;
+
+    player_pos.x = (player_pos.x > max_view.w-SPRITE_WIDTH+SPRITE_WHITE_SPACE) ? 
+    max_view.w-SPRITE_WIDTH+SPRITE_WHITE_SPACE : player_pos.x;
+
+    player_pos.y = (player_pos.y < max_view.y-SPRITE_WHITE_SPACE) ? 
+    max_view.y-SPRITE_WHITE_SPACE : player_pos.y;
+
+    player_pos.y = (player_pos.y > max_view.h-SPRITE_HEIGHT+SPRITE_WHITE_SPACE) ? 
+    max_view.h-SPRITE_HEIGHT+SPRITE_WHITE_SPACE : player_pos.y;
 }
 
 void Player::Render()

@@ -8,12 +8,11 @@
 
 class TitleState : public State {
 public:
-    int menu_option = 0;
-    Text * txt_luxuria_option, * txt_preguica_option;  
+    bool key_pressed = false;
+    Text * txt_start;  
     Timer key_delay;
     TitleState();
     ~TitleState();
-    void StartLevel();
 
     void LoadAssets() override;
     void Update(float dt) override;
