@@ -25,21 +25,22 @@ void Text::Update(float dt) {
 }
 
 void Text::Render() {
-	if (texture != nullptr) {
-		SDL_Rect clipRect;
-		clipRect.x = 0;
-		clipRect.y = 0;
-		clipRect.w = associated.lock()->box.w;
-		clipRect.h = associated.lock()->box.h;
+	if(show)
+		if (texture != nullptr) {
+			SDL_Rect clipRect;
+			clipRect.x = 0;
+			clipRect.y = 0;
+			clipRect.w = associated.lock()->box.w;
+			clipRect.h = associated.lock()->box.h;
 
-		SDL_Rect dstRect;
-		dstRect.x = associated.lock()->box.x + Camera::GetInstance().pos.x;
-		dstRect.y = associated.lock()->box.y + Camera::GetInstance().pos.y;
-		dstRect.w = associated.lock()->box.w;
-		dstRect.h = associated.lock()->box.h;
+			SDL_Rect dstRect;
+			dstRect.x = associated.lock()->box.x + Camera::GetInstance().pos.x;
+			dstRect.y = associated.lock()->box.y + Camera::GetInstance().pos.y;
+			dstRect.w = associated.lock()->box.w;
+			dstRect.h = associated.lock()->box.h;
 
-		SDL_RenderCopyEx(Game::GetInstance()->GetRenderer().lock().get(), texture, &clipRect, &dstRect, (180/M_PI)*associated.lock()->angle, nullptr, SDL_FLIP_NONE);
-	}
+			SDL_RenderCopyEx(Game::GetInstance()->GetRenderer().lock().get(), texture, &clipRect, &dstRect, (180/M_PI)*associated.lock()->angle, nullptr, SDL_FLIP_NONE);
+		}
 }
 
 bool Text::Is(std::string type) {
@@ -50,6 +51,13 @@ void Text::SetText(std::string text) {
 	this->text = text;
 	RemakeTexture();
 }
+
+
+void Text::SetText(std::string_view text) {
+	this->text = text;
+	RemakeTexture();
+}
+
 
 void Text::SetColor(SDL_Color color) {
 	this->color = color;

@@ -21,9 +21,9 @@ void Camera::Update(float dt)
   {
     this->pos = focus->box.GetCenter() - Vec2(Game::GetInstance()->GetWidth() / 2, Game::GetInstance()->GetHeight() / 2);
     pos.x = (pos.x < max_view.x) ? max_view.x : pos.x;
-    pos.x = (pos.x > max_view.w-GAME_WIDTH) ? max_view.w-GAME_WIDTH: pos.x;
+    pos.x = (pos.x > max_view.x+max_view.w-GAME_WIDTH) ? max_view.x+max_view.w-GAME_WIDTH: pos.x;
     pos.y = (pos.y < max_view.y) ? max_view.y : pos.y;
-    pos.y = (pos.y > max_view.h-GAME_HEIGHT) ? max_view.h-GAME_HEIGHT: pos.y;
+    pos.y = (pos.y > max_view.x+max_view.h-GAME_HEIGHT) ? max_view.x+max_view.h-GAME_HEIGHT: pos.y;
   }
   else
   {

@@ -1,15 +1,12 @@
 #include "LuxuriaState.hpp"
 #include "../../Camera/Camera.hpp"
 #include "../../Utils/Collision/Collision.cpp"
-#include "../../Componentes/Luxuria/Luxuria.hpp"
-#include "../../Componentes/Player/Player.hpp"
 #include "../../Componentes/CameraFollower/CameraFollower.hpp"
 #include "../../GameObject/GameObject.hpp"
 
 #include <algorithm>
 
 #include <array>
-#include <tuple>
 
 
 static std::array<Vec2, 20> pos_pinheiros_1 =
@@ -127,6 +124,8 @@ public:
 };
 
 
+
+
 LuxuriaState::LuxuriaState()
 {
     GameObject *go = new GameObject();
@@ -141,31 +140,46 @@ LuxuriaState::LuxuriaState()
     bg->SetScaleX(4, 4);
     go->AddComponent(bg);
 
-
+    // Seta a camera pra ter um limite maximo de visao 
     Rect game_view = {0,0, bg->GetWidth(), bg->GetHeight()};
-    Camera::GetInstance().SetView(game_view);
+    Camera::GetInstance().SetView(game_view); // Seta com o tamanho da imagem
 
 
     go = new GameObject();
     go->Depth = Dynamic;
-    auto player_goPtr = this->AddObject(go);
-    auto * player = new Player(player_goPtr);
+    player_goPtr = this->AddObject(go);
+    player = new Player(player_goPtr);
     go->AddComponent(player);
     go->box.x = 512;
     go->box.y = 300;
     go->AddComponent(new Collider(player_goPtr, {0.3, 0.3}, Vec2(64, 72)));
     Camera::GetInstance().Follow(go);
+    player_health_bar = new Sprite("Assets/barra_player.png", player_goPtr, 1, 1);
+    player_health_bar->SetScaleX(3, 3);
+    player_health_bar->show = true;
 
+    // Seta o player pra andar em um limite espaco
     player->SetView(game_view);
 
 
     go = new GameObject();
-    go->Depth = Dynamic;
+    go->Depth = Top;
     goPtr = this->AddObject(go);
-    go->AddComponent(new Luxuria(goPtr, 1000, player_goPtr));
-    go->AddComponent(new Collider(goPtr, {0.3, 0.3}, Vec2(64, 72)));
+    auto luxuria_dialog = new Dialog(goPtr);
+    go->AddComponent(luxuria_dialog);
+
+
+    go = new GameObject();
+    go->Depth = Dynamic;
+    luxuria_goPtr = this->AddObject(go);
+    luxuria = new Luxuria(luxuria_goPtr, 100, player_goPtr, luxuria_dialog);
+    go->AddComponent(luxuria);
+    go->AddComponent(new Collider(luxuria_goPtr, {0.3, 0.3}, Vec2(64, 72)));
     go->box.x = 300;
     go->box.y = 500;
+    luxuria_health_bar = new Sprite("Assets/barra_inimiga.png", luxuria_goPtr, 1, 1);
+    luxuria_health_bar->SetScaleX(3, 3);
+    luxuria_health_bar->show = true;
 
     // go = new GameObject();
     // go->Depth = Dynamic;
@@ -173,6 +187,7 @@ LuxuriaState::LuxuriaState()
     // go->box.x = 800;
     // go->box.y = 800;
     // Camera::GetInstance().Follow(go);
+
 
 
     go = new GameObject();
@@ -212,7 +227,6 @@ LuxuriaState::LuxuriaState()
         go->box.x = pos.x;
         go->box.y = pos.y;
     }
-    
 
 
 }
@@ -244,13 +258,14 @@ void LuxuriaState::Update(float dt)
     UpdateArray(dt);
 
     /* Verifica aqui se o jogo acabou */
+    if(luxuria->GetHp() <= 0){}
+        backgroundMusic.Stop();
 
     VerifyCollision();
 }
 
 void LuxuriaState::Render()
 {
-
 
     std::stable_sort(objectArray.begin()+2, objectArray.end(), [](const std::shared_ptr<GameObject> A, const std::shared_ptr<GameObject> B) 
     {
@@ -269,6 +284,16 @@ void LuxuriaState::Render()
     for (auto &it : objectArray)
     {
         it->Render();
+    }
+
+    if(!luxuria_goPtr.expired()){
+        luxuria_health_bar->SetClip(0,0, 20+luxuria->GetHp()/4, 64);
+        luxuria_health_bar->Render();
+    }
+
+    if(!player_goPtr.expired()){
+        player_health_bar->SetClip(0,0, 20+player->GetHp()/4, 64);
+        player_health_bar->Render();
     }
 }
 

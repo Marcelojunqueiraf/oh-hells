@@ -8,7 +8,8 @@
 
 enum DepthMode{
   Normal,
-  Dynamic
+  Dynamic,
+  Top
 };
 
 class Component;

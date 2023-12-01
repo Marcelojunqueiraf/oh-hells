@@ -6,18 +6,25 @@
 
 static Sprite *last_animation = nullptr;
 
-Luxuria::Luxuria(std::weak_ptr<GameObject> associated, int hp, std::weak_ptr<GameObject> player_go) :
- Component(associated), hp(100), player_go(player_go)
+
+#define SCALE 3
+#define IMG_SIZE SCALE*64
+
+
+Luxuria::Luxuria(std::weak_ptr<GameObject> associated, int hp, std::weak_ptr<GameObject> player_go, Dialog * luxuria_dialog) :
+ Component(associated), hp(100), player_go(player_go), luxuria_dialog(luxuria_dialog)
 {
     hit_animation = new Sprite("Assets/Luxuria_front_hit.png", associated, 6, 0.1);
     hit_animation->SetScaleX(3, 3);
     idle_animation = new Sprite("Assets/Luxuria_idle.png", associated, 5, 0.1);
     idle_animation->SetScaleX(3, 3);
+    
+
+    associated.lock()->AddComponent(hit_animation);
+    associated.lock()->AddComponent(idle_animation);
 
     hit_animation->show = false;
     last_animation = idle_animation;
-    associated.lock()->AddComponent(hit_animation);
-    associated.lock()->AddComponent(idle_animation);
 
     shootCooldown = Timer();
     hitTimer = Timer();
@@ -41,7 +48,9 @@ void Luxuria::Update(float dt)
     if (hp <= 0)
     {
         associated.lock()->RequestDelete();
+        return;
     }
+
 
     InputManager &input = InputManager::GetInstance();
 

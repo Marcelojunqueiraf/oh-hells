@@ -36,7 +36,7 @@ void TitleState::Update(float dt) {
     quitRequested = input.QuitRequested();
     popRequested = input.KeyPress(ESCAPE_KEY);
 
-    if (input.KeyPress(SDLK_SPACE)) {
+    if (input.KeyPress(SDLK_SPACE) || input.KeyPress(SDLK_RETURN)) {
         txt_start->SetColor({255, 0, 0, 255});
         key_pressed = true;
         key_delay.Restart();
@@ -45,6 +45,7 @@ void TitleState::Update(float dt) {
     if(key_pressed && key_delay.Get()>0.3f){
         key_pressed = false;
         txt_start->SetColor({0, 0, 0, 255});
+        // Game::GetInstance()->Push(new PreguicaState());
         Game::GetInstance()->Push(new LuxuriaState());
     }
 

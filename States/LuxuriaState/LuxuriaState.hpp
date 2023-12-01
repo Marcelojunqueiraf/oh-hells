@@ -1,6 +1,8 @@
 #pragma once
 
 #include "../State/State.hpp"
+#include "../../Componentes/Luxuria/Luxuria.hpp"
+#include "../../Componentes/Player/Player.hpp"
 
 class LuxuriaState : public State {
 public:
@@ -17,5 +19,14 @@ public:
 
 private:
     Music backgroundMusic;
+
+    Luxuria * luxuria;
+    Sprite * luxuria_health_bar;
+    std::weak_ptr<GameObject> luxuria_goPtr;
+
+
+    Player * player;
+    Sprite * player_health_bar;
+    std::weak_ptr<GameObject> player_goPtr;
 
 };

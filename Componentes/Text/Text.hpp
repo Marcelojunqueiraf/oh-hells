@@ -24,10 +24,13 @@ public:
 
 	bool Is(std::string type);
 	void SetText(std::string text);
+	void SetText(std::string_view text);
 	void SetColor(SDL_Color color);
 	void SetStyle(TextStyle style);
 	void SetFontFile(std::string fontFile);
 	void SetFontSize(int fontSize);
+
+	bool show = true;
 
 private:
 	TTF_Font * font;
