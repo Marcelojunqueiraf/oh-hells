@@ -258,9 +258,9 @@ void LuxuriaState::Update(float dt)
     UpdateArray(dt);
 
     /* Verifica aqui se o jogo acabou */
-    if(luxuria->GetHp() <= 0){}
+    if(luxuria->GetHp() <= 0){
         backgroundMusic.Stop();
-
+    }
     VerifyCollision();
 }
 
