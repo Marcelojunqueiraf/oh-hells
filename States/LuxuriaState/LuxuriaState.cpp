@@ -3,6 +3,7 @@
 #include "../../Camera/Camera.hpp"
 #include "../../Utils/Collision/Collision.cpp"
 #include "../../Componentes/HealthBar/HealthBar.hpp"
+#include "../../Componentes/ActionCollider/ActionCollider.hpp"
 #include "../../Componentes/CameraFollower/CameraFollower.hpp"
 #include "../../GameObject/GameObject.hpp"
 
@@ -210,12 +211,12 @@ LuxuriaState::LuxuriaState()
 
     go = new GameObject();
     go->Depth = Dynamic;
-    auto player_goPtr = this->AddObject(go);
+    player_goPtr = this->AddObject(go);
     player = new Player(player_goPtr);
     go->AddComponent(player);
     go->AddComponent(new HealthBar("Assets/barra_player.png", player_goPtr, player->GetHp()));
     go->AddComponent(new Collider(player_goPtr, {0.3, 0.3}, Vec2(64, 72)));
-    Camera::GetInstance().Follow(go);
+    Camera::GetInstance().Follow(player_goPtr);
     go->box.x = 512;
     go->box.y = 300;
 
@@ -232,7 +233,7 @@ LuxuriaState::LuxuriaState()
     luxuria_dialog_animation = new Sprite("Assets/luxuria_dialog.png", goPtr);
     luxuria_dialog_animation->SetScaleX((float)GAME_WIDTH/luxuria_dialog_animation->GetWidth(), (float)GAME_HEIGHT/luxuria_dialog_animation->GetHeight());
     go->AddComponent(luxuria_dialog);
-    luxuria_dialog->ShowDialog(luxuria_dialog_animation, {"Luxúria", "Ah, o meu convidado especial chegou! Fique à vontade. Quer um drink ou algo do tipo?"});
+    luxuria_dialog->ShowDialog(luxuria_dialog_animation, "Luxúria", "Ah, o meu convidado especial chegou! Fique à vontade. Quer um drink ou algo do tipo?");
 
 
     go = new GameObject();
@@ -252,6 +253,7 @@ LuxuriaState::LuxuriaState()
     // go->box.y = 800;
     // Camera::GetInstance().Follow(go);
 
+
     go = new GameObject();
     go->Depth = Dynamic;
     Sprite * tree = new Sprite("Assets/Cenario/portal.png", this->AddObject(go));
@@ -260,7 +262,7 @@ LuxuriaState::LuxuriaState()
     go->box.x = 4;
     go->box.y = 56;
 
-    for(auto & pos: pos_pinheiros_2){
+    for(auto & pos: pos_pinheiros_1){
         go = new GameObject();
         go->Depth = Dynamic;
         Sprite * tree = new Sprite("Assets/Cenario/arvore_1.png", this->AddObject(go));

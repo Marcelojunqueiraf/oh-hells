@@ -35,14 +35,16 @@ public:
 	bool PopRequested();
 
 
+    bool popRequested;
+    bool quitRequested;
+
+
 protected:
     void StartArray();
     virtual void UpdateArray(float dt);
     virtual void RenderArray();
 	virtual void VerifyCollision();
 
-    bool popRequested;
-    bool quitRequested;
     bool started;
 
 	std::vector<std::shared_ptr<GameObject>> objectArray;

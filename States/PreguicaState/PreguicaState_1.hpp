@@ -18,8 +18,9 @@ public:
     void Resume() override;
 
 private:
-    Music backgroundMusic;
-
+    Rect game_view;
+    Music& backgroundMusic;
     Player * player;
+    std::weak_ptr<GameObject> player_goPtr;
 
 };

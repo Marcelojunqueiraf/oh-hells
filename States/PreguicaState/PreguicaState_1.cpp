@@ -1,7 +1,9 @@
 #include "PreguicaState_1.hpp"
+#include "PreguicaState_2.hpp"
 #include "../../Camera/Camera.hpp"
 #include "../../Utils/Collision/Collision.cpp"
 #include "../../Componentes/HealthBar/HealthBar.hpp"
+#include "../../Componentes/ActionCollider/ActionCollider.hpp"
 #include "../../Componentes/CameraFollower/CameraFollower.hpp"
 #include "../../GameObject/GameObject.hpp"
 
@@ -22,9 +24,9 @@ static std::array<Vec2, 20> pos_pinheiros_1 =
     Vec2(498.0, 360.0),
     Vec2(582.0, 412.0),
     Vec2(742.0, 388.0),
-    Vec2(870.0, 444.0),
-    Vec2(694.0, 560.0),
-    Vec2(822.0, 636.0),
+    Vec2(8704.0, 560.0),
+    Vec2(82.0, 444.0),
+    Vec2(692.0, 636.0),
     Vec2(134.0, 396.0),
     Vec2(94.0, 540.0),
     Vec2(194.0, 568.0),
@@ -63,7 +65,7 @@ static std::array<Vec2, 8> pos_arv_seca_1 =
 
 
 
-PreguicaState_1::PreguicaState_1()
+PreguicaState_1::PreguicaState_1(): backgroundMusic(Game::GetInstance()->backgroundMusic)
 {
     GameObject *go = new GameObject();
     std::weak_ptr<GameObject> goPtr = this->AddObject(go);
@@ -71,30 +73,38 @@ PreguicaState_1::PreguicaState_1()
     go->AddComponent(bg);
     go->AddComponent(new CameraFollower(goPtr));
 
-
     // Adicionando mapa
     bg = new Sprite("Assets/Cenario/mapa_portal_preguica.png", this->AddObject(new GameObject()));
     bg->SetScaleX(4, 4);
     go->AddComponent(bg);
 
+    // Teleporte de mapa
+    go = new GameObject();
+    go->box = {1780, 880, 10,800};
+    goPtr = this->AddObject(go);
+    go->AddComponent(new ActionCollider(goPtr, {1, 1}, Vec2(0, 0), this, 
+    [](State * state, std::weak_ptr<GameObject> other){
+        Player *player = (Player *)other.lock()->GetComponent("Player").lock().get();
+        if(player){
+            player->SetPosition(1647, 1270);
+            Game::GetInstance()->Push(new PreguicaState_2());
+        }
+    }
+    ));
+
     // Seta a camera pra ter um limite maximo de visao 
-    Rect game_view = {0,0, bg->GetWidth(), bg->GetHeight()};
-    Camera::GetInstance().SetView(game_view); // Seta com o tamanho da imagem
+    game_view = {0,0, bg->GetWidth(), bg->GetHeight()};
 
 
     go = new GameObject();
     go->Depth = Dynamic;
-    auto player_goPtr = this->AddObject(go);
+    player_goPtr = this->AddObject(go);
     player = new Player(player_goPtr);
+    player->SetPosition(512, 300);
     go->AddComponent(player);
-    go->box.x = 512;
-    go->box.y = 300;
-    go->AddComponent(new HealthBar("Assets/barra_inimiga.png", player_goPtr, player->GetHp()));
+    go->AddComponent(new HealthBar("Assets/barra_player.png", player_goPtr, player->GetHp()));
     go->AddComponent(new Collider(player_goPtr, {0.3, 0.3}, Vec2(64, 72)));
-    Camera::GetInstance().Follow(go);
-
-    // Seta o player pra andar em um limite espaco
-    player->SetView(game_view);
+    player->SetView(game_view);// Seta o player pra andar em um limite espaco
 
     // go = new GameObject();
     // go->Depth = Dynamic;
@@ -102,8 +112,6 @@ PreguicaState_1::PreguicaState_1()
     // go->box.x = 800;
     // go->box.y = 800;
     // Camera::GetInstance().Follow(go);
-
-
 
     go = new GameObject();
     go->Depth = Dynamic;
@@ -113,7 +121,7 @@ PreguicaState_1::PreguicaState_1()
     go->box.x = 4;
     go->box.y = 56;
 
-    for(auto & pos: pos_pinheiros_2){
+    for(auto & pos: pos_pinheiros_1){
         go = new GameObject();
         go->Depth = Dynamic;
         Sprite * tree = new Sprite("Assets/Cenario/arvore_1.png", this->AddObject(go));
@@ -153,19 +161,18 @@ PreguicaState_1::~PreguicaState_1()
 
 void PreguicaState_1::LoadAssets()
 {
-    backgroundMusic.Open("Assets/Luxuria1.ogg");
+    backgroundMusic.Open("Assets/Eli_memoria.ogg");
 }
 
 void PreguicaState_1::Update(float dt)
 {
-
     Camera::GetInstance().Update(dt);
 
     auto input_manager = InputManager::GetInstance();
 
     quitRequested = input_manager.QuitRequested();
 
-    popRequested = input_manager.KeyPress(ESCAPE_KEY);
+    // popRequested = input_manager.KeyPress(ESCAPE_KEY);
 
     if (popRequested)
         backgroundMusic.Stop();
@@ -206,14 +213,19 @@ void PreguicaState_1::Start()
     StartArray();
     LoadAssets();
     backgroundMusic.Play();
+    Camera::GetInstance().SetView(game_view); // Seta com o tamanho da imagem
+    Camera::GetInstance().Follow(player_goPtr);
 }
 
 void PreguicaState_1::Pause()
 {
-    backgroundMusic.Stop();
+    Camera::GetInstance().Unfollow();
+    backgroundMusic.Pause();
 }
 
 void PreguicaState_1::Resume()
 {
-    backgroundMusic.Play();
+    backgroundMusic.Resume();
+    Camera::GetInstance().SetView(game_view); // Seta com o tamanho da imagem
+    Camera::GetInstance().Follow(player_goPtr);
 }

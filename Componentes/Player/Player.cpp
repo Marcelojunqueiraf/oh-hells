@@ -10,8 +10,6 @@
 #define SPRITE_HEIGHT SCALE*64
 #define SPRITE_WHITE_SPACE SCALE*24
 
-static Sprite *last_animation = nullptr;
-
 Player::Player(std::weak_ptr<GameObject> associated) : Component(associated),
                                                        speed(0, 0), linearSpeed(0), angle(0), hp(100)
 {
@@ -87,6 +85,11 @@ void Player::ShowSprite(Sprite *spr)
     last_animation = spr;
 }
 
+void Player::SetPosition(int x, int y){
+    Rect& player_pos = associated.lock()->box;
+    player_pos.x = x;
+    player_pos.y = y;
+}
 
 void Player::SetView(Rect max_view){
     this->max_view = max_view;
@@ -104,6 +107,12 @@ void Player::Update(float dt)
     bool down = input.IsKeyDown(SDLK_s);
     bool left = input.IsKeyDown(SDLK_a);
     bool right = input.IsKeyDown(SDLK_d);
+
+
+    if(input.IsKeyDown(SDLK_SPACE)){
+        Rect pos = associated.lock()->box;
+        printf("%0.1lf, %0.1lf\n", pos.x, pos.y);
+    }
 
 
     Rect& player_pos = associated.lock()->box;

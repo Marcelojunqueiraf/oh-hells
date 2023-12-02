@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../State/State.hpp"
+#include "../../Componentes/Dialog/Dialog.hpp"
 #include "../../Componentes/Preguica/Preguica.hpp"
 #include "../../Componentes/Player/Player.hpp"
 
@@ -18,6 +19,18 @@ public:
     void Resume() override;
 
 private:
-    Music backgroundMusic;
+    Rect game_view;
+    Music& backgroundMusic;
+
+    Player * player;
+    std::weak_ptr<GameObject> player_goPtr;
+
+    bool dialog_finished = false;
+    float dialog_time = 3;
+    size_t dialog_index = 0;
+    Timer dialogCooldown;
+
+    Dialog * preguica_dialog;
+    Sprite * preguica_dialog_animation;
 
 };

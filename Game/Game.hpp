@@ -5,6 +5,7 @@
 #define INCLUDE_SDL_TTF
 #include "../SDL_include.h"
 #include "../States/State/State.hpp"
+#include "../Music/Music.hpp"
 #include "../Utils/InputManager/InputManager.hpp"
 #include <memory>
 #include <stack>
@@ -30,6 +31,7 @@ private:
   Game(std::string title, int width, int height);
 
 public:
+  Music backgroundMusic;
   static Game *GetInstance();
   void Run();
   void Push(State *state);

@@ -36,11 +36,12 @@ public:
     Vec2 Position();
     void ShowSprite(Sprite *spr);
     void SetView(Rect max_view);
+    void SetPosition(int x, int y);
     int& GetHp();
 
 private:
     Rect max_view;
-
+    Sprite *last_animation = nullptr;
     Sprite *stand_straight, *death_animation;
     Sprite *walk_left, *walk_right, *walk_back, *walk_front, *hit_animation;
     Sprite *left_attack_animation, *right_attack_animation, *front_attack_animation, *back_attack_animation;

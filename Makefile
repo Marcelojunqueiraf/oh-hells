@@ -5,7 +5,7 @@ STATES := $(wildcard States/*/*.cpp)
 FILES := $(wildcard */*.cpp)
 
 all:
-	g++ main.cpp ${COMPONENTES} ${UTILS} $(STATES) ${FILES} ${SUBCOMPONENTES} -o jogo `sdl2-config --cflags --libs` -lSDL2 -lSDL2_mixer -lSDL2_image -lSDL2_ttf -lSDL2main
+	g++ -g main.cpp ${COMPONENTES} ${UTILS} $(STATES) ${FILES} ${SUBCOMPONENTES} -o jogo `sdl2-config --cflags --libs` -lSDL2 -lSDL2_mixer -lSDL2_image -lSDL2_ttf -lSDL2main
 	 ./jogo
 
 # # O compilador

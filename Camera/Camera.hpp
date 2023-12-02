@@ -8,14 +8,14 @@
 class Camera
 {
 private:
-  GameObject *focus;
+  std::weak_ptr<GameObject> focus;
 
 public:
   Vec2 speed;
   Vec2 pos;
   Rect max_view;
   void SetView(Rect max_view);
-  void Follow(GameObject *newFocus);
+  void Follow(std::weak_ptr<GameObject> newFocus);
   void Unfollow();
   void Update(float dt);
   static Camera &GetInstance();

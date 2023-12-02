@@ -47,8 +47,8 @@ void TitleState::Update(float dt) {
     if(key_pressed && key_delay.Get()>0.3f){
         key_pressed = false;
         txt_start->SetColor({0, 0, 0, 255});
-        // Game::GetInstance()->Push(new PreguicaState_1());
-        Game::GetInstance()->Push(new LuxuriaState());
+        Game::GetInstance()->Push(new PreguicaState_1());
+        // Game::GetInstance()->Push(new LuxuriaState());
     }
 
     UpdateArray(dt);

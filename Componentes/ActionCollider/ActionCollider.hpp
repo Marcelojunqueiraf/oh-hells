@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../../Game/Game.hpp"
+#include "../../States/State/State.hpp"
 #include "../Component/Component.hpp"
 #include "../Sprite/Sprite.hpp"
 #include "../Sound/Sound.hpp"
@@ -11,24 +12,16 @@
 
 #include <memory>
 
-class Sprite;
-
-class Preguica : public Component
+class ActionCollider : public Component
 {
 
 public:
-    Preguica(std::weak_ptr<GameObject> associated, int hp);
-    ~Preguica();
-    void Update(float dt);
+    ActionCollider(std::weak_ptr<GameObject> associated, Vec2 scale, Vec2 offset, State* state, void (*callbak)(State*, std::weak_ptr<GameObject>));
+    ~ActionCollider();
     bool Is(std::string type);
     void NotifyCollision(std::weak_ptr<GameObject> other);
-    void ShowSprite(Sprite * spr);
-    int& GetHp();
-    void TakeDamage(int damage);
 
 private:
-    int hp;
-    Timer shootCooldown;
-    Timer hitTimer;
-    Sprite *idle_animation, *hit_animation;
+    State * state;
+    void (*callbak)(State*, std::weak_ptr<GameObject>);
 };

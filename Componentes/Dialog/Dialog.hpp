@@ -13,7 +13,7 @@
 #include <string>
 
 struct dialog_info{
-    // Sprite * character_emotion;
+    float time;
     std::string character_name;
     std::string character_msg;
 };
@@ -29,10 +29,11 @@ public:
     void Render();
     bool Is(std::string type);
     void Hide();
-    void ShowDialog(Sprite * emotion, dialog_info dialog);
+    void ShowDialog(Sprite * emotion, std::string chr_name, std::string chr_msg);
 
 private:
     Sprite * background;
+    Sprite *last_character_animation = nullptr;
     Text * character_name;
     Text * character_message;
     Timer keyCooldown;

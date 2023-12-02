@@ -1,8 +1,6 @@
 #include "Dialog.hpp"
 #include "../CameraFollower/CameraFollower.hpp"
 
-static Sprite *last_character_animation = nullptr;
-
 Dialog::Dialog(std::weak_ptr<GameObject> associated) 
 : Component(associated)
 {
@@ -27,18 +25,24 @@ void Dialog::Hide(){
     background->show = false;
     if(last_character_animation)
         last_character_animation->show = false;
+    
+    character_name->show = false;
+    character_message->show = false;
 }
 
-void Dialog::ShowDialog(Sprite * emotion, dialog_info dialog){
+void Dialog::ShowDialog(Sprite * emotion, std::string chr_name, std::string chr_msg){
     background->show = true;
-    last_character_animation->show = false; 
+
+    if(last_character_animation)
+        last_character_animation->show = false; 
+
     last_character_animation = emotion;
     last_character_animation->show = true;
 
-    character_name->SetText(std::move(dialog.character_name));
+    character_name->SetText(std::move(chr_name));
     character_name->show = true;
 
-    character_message->SetText(std::move(dialog.character_msg));
+    character_message->SetText(std::move(chr_msg));
     character_message->show = true;
 }
 
@@ -50,7 +54,8 @@ void Dialog::Update(float dt){
 }
 
 void Dialog::Render(){
-    last_character_animation->Render();
+    if(last_character_animation)
+        last_character_animation->Render();
     character_name->Render(390,380);
     character_message->Render(390,430);
 }

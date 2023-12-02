@@ -1,13 +1,13 @@
 #include "./Camera.hpp"
 
-void Camera::Follow(GameObject *newFocus)
+void Camera::Follow(std::weak_ptr<GameObject> newFocus)
 {
   focus = newFocus;
 }
 
 void Camera::Unfollow()
 {
-  focus = nullptr;
+  focus.reset();
 }
 
 void Camera::SetView(Rect max_view)
@@ -17,9 +17,10 @@ void Camera::SetView(Rect max_view)
 
 void Camera::Update(float dt)
 {
-  if (focus != nullptr)
+  if (!focus.expired())
   {
-    this->pos = focus->box.GetCenter() - Vec2(Game::GetInstance()->GetWidth() / 2, Game::GetInstance()->GetHeight() / 2);
+    auto * focus_go = focus.lock().get();
+    this->pos = focus_go->box.GetCenter() - Vec2(Game::GetInstance()->GetWidth() / 2, Game::GetInstance()->GetHeight() / 2);
     pos.x = (pos.x < max_view.x) ? max_view.x : pos.x;
     pos.x = (pos.x > max_view.x+max_view.w-GAME_WIDTH) ? max_view.x+max_view.w-GAME_WIDTH: pos.x;
     pos.y = (pos.y < max_view.y) ? max_view.y : pos.y;
@@ -54,6 +55,5 @@ Camera::Camera()
 {
   this->speed = Vec2(200, 200);
   this->pos = Vec2(0, 0);
-  this->focus = nullptr;
   this->max_view= {-GAME_WIDTH,-GAME_HEIGHT,GAME_WIDTH, GAME_HEIGHT};
 }

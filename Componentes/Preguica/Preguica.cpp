@@ -79,7 +79,7 @@ void Preguica::NotifyCollision(std::weak_ptr<GameObject> other)
 }
 
 
-int Preguica::GetHp()
+int& Preguica::GetHp()
 {
     return hp;
 }

@@ -28,5 +28,6 @@ private:
 
 
     Player * player;
+    std::weak_ptr<GameObject> player_goPtr;
 
 };

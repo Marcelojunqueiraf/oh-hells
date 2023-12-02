@@ -16,6 +16,8 @@ public:
   ~Music();
   void Play(int times = -1);
   void Stop(int msToStop = 1500);
+  void Pause(){Mix_PauseMusic();}
+  void Resume(){Mix_ResumeMusic();}
   void Open(std::string file);
   bool IsOpen();
 };

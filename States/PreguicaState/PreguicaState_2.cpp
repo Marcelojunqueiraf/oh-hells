@@ -1,6 +1,9 @@
 #include "PreguicaState_2.hpp"
+#include "PreguicaState.hpp"
 #include "../../Camera/Camera.hpp"
 #include "../../Utils/Collision/Collision.cpp"
+#include "../../Componentes/HealthBar/HealthBar.hpp"
+#include "../../Componentes/ActionCollider/ActionCollider.hpp"
 #include "../../Componentes/CameraFollower/CameraFollower.hpp"
 #include "../../GameObject/GameObject.hpp"
 #include "../../Componentes/MovingObject/MovingObject.hpp"
@@ -57,7 +60,7 @@ static std::array<Vec2, 18> pos_arv_seca_1 =
 };
 
 
-PreguicaState_2::PreguicaState_2()
+PreguicaState_2::PreguicaState_2(): backgroundMusic(Game::GetInstance()->backgroundMusic)
 {
     GameObject *go = new GameObject();
     std::weak_ptr<GameObject> goPtr = this->AddObject(go);
@@ -65,41 +68,50 @@ PreguicaState_2::PreguicaState_2()
     go->AddComponent(bg);
     go->AddComponent(new CameraFollower(goPtr));
 
-
     // Adicionando mapa
     bg = new Sprite("Assets/Cenario/mapa_preguica_2.png", this->AddObject(new GameObject()));
     bg->SetScaleX(4, 4);
     go->AddComponent(bg);
 
     // Seta a camera pra ter um limite maximo de visao 
-    Rect game_view = {0,0, bg->GetWidth(), bg->GetHeight()};
-    Camera::GetInstance().SetView(game_view); // Seta com o tamanho da imagem
+    game_view = {0,0, bg->GetWidth(), bg->GetHeight()};
 
+    // Teleporte para mapa anterior
+    go = new GameObject();
+    go->box = {0, 1060, 10, 285};
+    goPtr = this->AddObject(go);
+    go->AddComponent(new ActionCollider(goPtr, {1, 1}, {0, 0}, this, 
+    [](State * state, std::weak_ptr<GameObject> other){
+        Player *player = (Player *)other.lock()->GetComponent("Player").lock().get();
+        if(player){
+            state->popRequested = true;
+        }
+    }
+    ));
+
+    // Teleporte de mapa
+    go = new GameObject();
+    go->box = {455, 550, 480, 60};
+    goPtr = this->AddObject(go);
+    go->AddComponent(new ActionCollider(goPtr, {1, 1}, {0,0}, this, 
+    [](State * state, std::weak_ptr<GameObject> other){
+        Player *player = (Player *)other.lock()->GetComponent("Player").lock().get();
+        if(player){
+            player->SetPosition(645, 545);
+            Game::GetInstance()->Push(new PreguicaState());
+        }
+    }
+    ));
 
     go = new GameObject();
     go->Depth = Dynamic;
     player_goPtr = this->AddObject(go);
     player = new Player(player_goPtr);
+    player->SetPosition(-45, 1105);
     go->AddComponent(player);
-    go->box.x = 0;
-    go->box.y = 1152;
+    go->AddComponent(new HealthBar("Assets/barra_player.png", player_goPtr, player->GetHp()));
     go->AddComponent(new Collider(player_goPtr, {0.3, 0.3}, Vec2(64, 72)));
-    Camera::GetInstance().Follow(go);
-    player_health_bar = new Sprite("Assets/barra_player.png", player_goPtr, 1, 1);
-    player_health_bar->SetScaleX(3, 3);
-    player_health_bar->show = true;
-
-    // Seta o player pra andar em um limite espaco
-    player->SetView(game_view);
-
-    // go = new GameObject();
-    // go->Depth = Dynamic;
-    // go->AddComponent(new MovingObject("Assets/Cenario/arvore_seca_2.png",this->AddObject(go)));
-    // go->box.x = 800;
-    // go->box.y = 800;
-    // Camera::GetInstance().Follow(go);
-
-
+    player->SetView(game_view); // Seta o player pra andar em um limite espaco
 
     // go = new GameObject();
     // go->Depth = Dynamic;
@@ -139,7 +151,6 @@ PreguicaState_2::~PreguicaState_2()
 
 void PreguicaState_2::LoadAssets()
 {
-    backgroundMusic.Open("Assets/Luxuria1.ogg");
 }
 
 void PreguicaState_2::Update(float dt)
@@ -151,10 +162,7 @@ void PreguicaState_2::Update(float dt)
 
     quitRequested = input_manager.QuitRequested();
 
-    popRequested = input_manager.KeyPress(ESCAPE_KEY);
-
-    if (popRequested)
-        backgroundMusic.Stop();
+    // popRequested = input_manager.KeyPress(ESCAPE_KEY);
 
     UpdateArray(dt);
 
@@ -184,26 +192,27 @@ void PreguicaState_2::Render()
     {
         it->Render();
     }
-
-    // if(!player_goPtr.expired()){
-    //     player_health_bar->SetClip(0,0, 20+player->GetHp()/4, 64);
-    //     player_health_bar->Render();
-    // }
 }
 
 void PreguicaState_2::Start()
 {
     StartArray();
     LoadAssets();
-    backgroundMusic.Play();
+    // backgroundMusic.Play(); 
+    backgroundMusic.Resume(); // Continua a musica anterior
+    Camera::GetInstance().SetView(game_view); // Seta com o tamanho da imagem
+    Camera::GetInstance().Follow(player_goPtr);
 }
 
 void PreguicaState_2::Pause()
 {
-    backgroundMusic.Stop();
+    backgroundMusic.Pause();
+    Camera::GetInstance().Unfollow();
 }
 
 void PreguicaState_2::Resume()
 {
-    backgroundMusic.Play();
+    backgroundMusic.Resume();
+    Camera::GetInstance().SetView(game_view); // Seta com o tamanho da imagem
+    Camera::GetInstance().Follow(player_goPtr);
 }
