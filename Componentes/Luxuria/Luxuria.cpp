@@ -1,4 +1,5 @@
 #include "Luxuria.hpp"
+#include "../HealthBar/HealthBar.hpp"
 
 #define PI 3.14159265359
 
@@ -11,17 +12,17 @@ static Sprite *last_animation = nullptr;
 #define IMG_SIZE SCALE*64
 
 
-Luxuria::Luxuria(std::weak_ptr<GameObject> associated, int hp, std::weak_ptr<GameObject> player_go, Dialog * luxuria_dialog) :
- Component(associated), hp(100), player_go(player_go), luxuria_dialog(luxuria_dialog)
+Luxuria::Luxuria(std::weak_ptr<GameObject> associated, int hp, std::weak_ptr<GameObject> player_go) :
+ Component(associated), hp(100), player_go(player_go)
 {
     hit_animation = new Sprite("Assets/Luxuria_front_hit.png", associated, 6, 0.1);
     hit_animation->SetScaleX(3, 3);
     idle_animation = new Sprite("Assets/Luxuria_idle.png", associated, 5, 0.1);
     idle_animation->SetScaleX(3, 3);
     
-
     associated.lock()->AddComponent(hit_animation);
     associated.lock()->AddComponent(idle_animation);
+    // associated.lock()->AddComponent(new HealthBar("Assets/barra_inimiga.png", associated, hp));
 
     hit_animation->show = false;
     last_animation = idle_animation;
@@ -92,7 +93,7 @@ void Luxuria::NotifyCollision(std::weak_ptr<GameObject> other)
     }
 }
 
-int Luxuria::GetHp()
+int& Luxuria::GetHp()
 {
     return hp;
 }

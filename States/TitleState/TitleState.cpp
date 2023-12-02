@@ -1,11 +1,13 @@
 #include "TitleState.hpp"
-#include "../LuxuriaState/LuxuriaState.hpp"
-#include "../PreguicaState/PreguicaState.hpp"
 #include "../../Game/Game.hpp"
 #include "../../Camera/Camera.hpp"
 #include "../../Componentes/Sprite/Sprite.hpp"
 #include "../../Utils/InputManager/InputManager.hpp"
 #include "../../Componentes/CameraFollower/CameraFollower.hpp"
+#include "../LuxuriaState/LuxuriaState.hpp"
+#include "../PreguicaState/PreguicaState_1.hpp"
+#include "../PreguicaState/PreguicaState_2.hpp"
+#include "../PreguicaState/PreguicaState.hpp"
 
 TitleState::TitleState() {
     auto bg = new GameObject;
@@ -45,7 +47,7 @@ void TitleState::Update(float dt) {
     if(key_pressed && key_delay.Get()>0.3f){
         key_pressed = false;
         txt_start->SetColor({0, 0, 0, 255});
-        // Game::GetInstance()->Push(new PreguicaState());
+        // Game::GetInstance()->Push(new PreguicaState_1());
         Game::GetInstance()->Push(new LuxuriaState());
     }
 

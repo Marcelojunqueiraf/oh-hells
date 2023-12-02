@@ -1,6 +1,8 @@
 #include "LuxuriaState.hpp"
+
 #include "../../Camera/Camera.hpp"
 #include "../../Utils/Collision/Collision.cpp"
+#include "../../Componentes/HealthBar/HealthBar.hpp"
 #include "../../Componentes/CameraFollower/CameraFollower.hpp"
 #include "../../GameObject/GameObject.hpp"
 
@@ -8,6 +10,67 @@
 
 #include <array>
 
+
+// std::vector<dialog_info> luxuria_dialog_logic =
+// {
+//     {"Luxúria", "Ah, o meu convidado especial chegou! Fique à vontade. Quer um drink ou algo do tipo?"},
+
+//     {"Angelus", "Não caia nas conversas dele. Eu consigo sentir o cheiro de caos daqui! Literalmente. "},
+
+//     {"Nelli", "Deixa de ser chato Angelus. A vida é uma festa!"},
+
+//     {"Angelus", "E não escute Nelli também. Foco! Estamos aqui para recuperar suas memórias, lembre-se disso."},
+
+//     {"Luxúria", "Oh, querido, quer mesmo desenterrar o passado? Por que não abraça o presente? A vida é muito mais interessante quando não estamos presos àquilo que fomos."},
+
+//     {"Luxúria", "De acordo os outros que vivem aqui, dizem que vivemos no inferno, porém não sei se concordo com essa frase. Afinal eu já trabalhei na escala 6x1 na minha vida passada."},
+
+//     // [Animação dúvida]
+
+//     {"Nelli", "O que diabos isso significa?"},
+
+//     {"Angelus", "Não faço ideia."},
+
+//     {"Luxuria", "Aquilo sim era o inferno! Desumano e terrível, eu jamais desejaria aquilo até para o meu pior inimigo. Comparado aquilo, isso aqui é o paraíso!"},
+
+//     {"Luxúria", "Ah, lamento. Esqueci que vocês lobotomizados não fazem ideia do que eu estou falando haha."},
+
+//     {"Luxúria", "De qualquer forma, desde que todos se explodiram eu me tornei o que sempre quis ser. "},
+
+//     {"Luxúria", "Mas agora aqueles lá de cima querem “organizar a casa”. Faça me favor. Nem é deles para eles organizarem!"},
+
+//     {"Luxuria", "O mundo agora é uma festa! Caos, liberdade, nenhum estresse de vidas passadas. Você não acha isso incrível?"},
+
+//     // {, "Opção 1", "Não, eu não acho. "},
+
+//     {"Angelus", "Não tem nada de interessante no puro caos."},
+
+//     {"Nelli", "Chatooos~ "},
+
+//     {"Luxúria", "É uma pena que não concorde, poderíamos nos divertir juntos. "},
+
+//     // // {"Opção 2", "Realmente, você tem um ponto."},
+
+//     {"Angelus", "O que?! Você não pode tá falando sério. "},
+
+//     {"Nelli", "Haha, isso garoto! Deixa o Angelus mais irritado, por favor!"},
+
+//     {"Luxúria", "Oh! Fico feliz que concorde comigo. É fato que o caos carrega sua própria beleza. "},
+
+//     {"Luxúria", "Apesar do bate papo emocionante, não posso te entregar o quer, porque isso vai contra as coisas que eu quero. Afinal você vem lá de cima, não vou com a cara deles, apesar de você ser…arrumadinho. "},
+
+//     {"Nelli", "Nossa, deprimente. Devia se cuidar mais garoto."},
+
+//     {"Angelis", "Sinto muito, Eli."},
+
+//     // // [Animação irritado]
+
+//     {"Luxúria", "Enfim, sinto muito querido. Se quiser seu amuleto vai ter que pegar a força. Muita força~"},
+
+//     // [Animação com a Gota] 
+
+//     {"Luxúria", "Pode vir! Vou garantir que não existe nunca mais escala 6X1 e que a liberdade não seja tirada desse mundo!"},
+// };
 
 static std::array<Vec2, 20> pos_pinheiros_1 =
 {
@@ -147,16 +210,14 @@ LuxuriaState::LuxuriaState()
 
     go = new GameObject();
     go->Depth = Dynamic;
-    player_goPtr = this->AddObject(go);
+    auto player_goPtr = this->AddObject(go);
     player = new Player(player_goPtr);
     go->AddComponent(player);
-    go->box.x = 512;
-    go->box.y = 300;
+    go->AddComponent(new HealthBar("Assets/barra_player.png", player_goPtr, player->GetHp()));
     go->AddComponent(new Collider(player_goPtr, {0.3, 0.3}, Vec2(64, 72)));
     Camera::GetInstance().Follow(go);
-    player_health_bar = new Sprite("Assets/barra_player.png", player_goPtr, 1, 1);
-    player_health_bar->SetScaleX(3, 3);
-    player_health_bar->show = true;
+    go->box.x = 512;
+    go->box.y = 300;
 
     // Seta o player pra andar em um limite espaco
     player->SetView(game_view);
@@ -164,22 +225,25 @@ LuxuriaState::LuxuriaState()
 
     go = new GameObject();
     go->Depth = Top;
+    go->box.x = 0;
+    go->box.y = 0;
     goPtr = this->AddObject(go);
-    auto luxuria_dialog = new Dialog(goPtr);
+    luxuria_dialog = new Dialog(goPtr);
+    luxuria_dialog_animation = new Sprite("Assets/luxuria_dialog.png", goPtr);
+    luxuria_dialog_animation->SetScaleX((float)GAME_WIDTH/luxuria_dialog_animation->GetWidth(), (float)GAME_HEIGHT/luxuria_dialog_animation->GetHeight());
     go->AddComponent(luxuria_dialog);
+    luxuria_dialog->ShowDialog(luxuria_dialog_animation, {"Luxúria", "Ah, o meu convidado especial chegou! Fique à vontade. Quer um drink ou algo do tipo?"});
 
 
     go = new GameObject();
     go->Depth = Dynamic;
-    luxuria_goPtr = this->AddObject(go);
-    luxuria = new Luxuria(luxuria_goPtr, 100, player_goPtr, luxuria_dialog);
+    auto luxuria_goPtr = this->AddObject(go);
+    luxuria = new Luxuria(luxuria_goPtr, 100, player_goPtr);
     go->AddComponent(luxuria);
+    go->AddComponent(new HealthBar("Assets/barra_inimiga.png", luxuria_goPtr, luxuria->GetHp()));
     go->AddComponent(new Collider(luxuria_goPtr, {0.3, 0.3}, Vec2(64, 72)));
     go->box.x = 300;
     go->box.y = 500;
-    luxuria_health_bar = new Sprite("Assets/barra_inimiga.png", luxuria_goPtr, 1, 1);
-    luxuria_health_bar->SetScaleX(3, 3);
-    luxuria_health_bar->show = true;
 
     // go = new GameObject();
     // go->Depth = Dynamic;
@@ -187,8 +251,6 @@ LuxuriaState::LuxuriaState()
     // go->box.x = 800;
     // go->box.y = 800;
     // Camera::GetInstance().Follow(go);
-
-
 
     go = new GameObject();
     go->Depth = Dynamic;
@@ -198,7 +260,7 @@ LuxuriaState::LuxuriaState()
     go->box.x = 4;
     go->box.y = 56;
 
-    for(auto & pos: pos_pinheiros_1){
+    for(auto & pos: pos_pinheiros_2){
         go = new GameObject();
         go->Depth = Dynamic;
         Sprite * tree = new Sprite("Assets/Cenario/arvore_1.png", this->AddObject(go));
@@ -261,6 +323,9 @@ void LuxuriaState::Update(float dt)
     if(luxuria->GetHp() <= 0){
         backgroundMusic.Stop();
     }
+
+    // if(input_manager.KeyPress(SDLK_0)){
+    // }
     VerifyCollision();
 }
 
@@ -286,15 +351,6 @@ void LuxuriaState::Render()
         it->Render();
     }
 
-    if(!luxuria_goPtr.expired()){
-        luxuria_health_bar->SetClip(0,0, 20+luxuria->GetHp()/4, 64);
-        luxuria_health_bar->Render();
-    }
-
-    if(!player_goPtr.expired()){
-        player_health_bar->SetClip(0,0, 20+player->GetHp()/4, 64);
-        player_health_bar->Render();
-    }
 }
 
 void LuxuriaState::Start()

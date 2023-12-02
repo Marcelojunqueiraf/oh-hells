@@ -3,7 +3,9 @@
 #include "../../Game/Game.hpp"
 #include "../../Camera/Camera.hpp"
 
-Text::Text(std::string fontFile, std::weak_ptr<GameObject> associated, int fontSize, TextStyle style, std::string text, SDL_Color color) : Component(associated) {
+Text::Text(std::string fontFile, std::weak_ptr<GameObject> associated, int fontSize, TextStyle style, std::string text, SDL_Color color, uint32_t wrap_size) 
+: Component(associated), wrap_size(wrap_size)
+{
 	texture = nullptr;
 	this->text = text;
 	this->style = style;
@@ -20,27 +22,44 @@ Text::~Text() {
 		SDL_DestroyTexture(texture);
 }
 
+
+void Text::SetScale(float scaleX, float scaleY)
+{
+  this->scale.x = scaleX;
+  this->scale.y = scaleY;
+//   this->associated.lock()->box.w = this->width * scaleX;
+//   this->associated.lock()->box.h = this->height * scaleY;
+}
+
 void Text::Update(float dt) {
 
 }
 
-void Text::Render() {
+void Text::Render(int x, int y) {
 	if(show)
 		if (texture != nullptr) {
+
+    		auto assoc = associated.lock();
+
 			SDL_Rect clipRect;
 			clipRect.x = 0;
 			clipRect.y = 0;
-			clipRect.w = associated.lock()->box.w;
-			clipRect.h = associated.lock()->box.h;
-
+			clipRect.w = width;
+			clipRect.h = height;
+			
 			SDL_Rect dstRect;
-			dstRect.x = associated.lock()->box.x + Camera::GetInstance().pos.x;
-			dstRect.y = associated.lock()->box.y + Camera::GetInstance().pos.y;
-			dstRect.w = associated.lock()->box.w;
-			dstRect.h = associated.lock()->box.h;
+			Camera &camera = Camera::GetInstance();
+			dstRect.x = assoc->box.x + x - camera.pos.x;
+			dstRect.y = assoc->box.y + y - camera.pos.y;
+			dstRect.w = clipRect.w * scale.x;
+			dstRect.h = clipRect.h * scale.y;
 
 			SDL_RenderCopyEx(Game::GetInstance()->GetRenderer().lock().get(), texture, &clipRect, &dstRect, (180/M_PI)*associated.lock()->angle, nullptr, SDL_FLIP_NONE);
 		}
+}
+
+void Text::Render() {
+	Render(0, 0);
 }
 
 bool Text::Is(std::string type) {
@@ -88,13 +107,13 @@ void Text::RemakeTexture() {
 
 	switch (style) {
 		case SOLID:
-			surf = TTF_RenderText_Solid(font, text.c_str(), color);
+			surf = TTF_RenderUTF8_Solid_Wrapped(font, text.c_str(), color, wrap_size);
 			break;
 		case SHADED:
-			surf = TTF_RenderText_Shaded(font, text.c_str(), color, {0, 0, 0, 255});
+			surf = TTF_RenderUTF8_Shaded_Wrapped(font, text.c_str(), color, {0, 0, 0, 255}, wrap_size);
 			break;
 		case BLENDED:
-			surf = TTF_RenderText_Blended(font, text.c_str(), color);
+			surf = TTF_RenderUTF8_Blended_Wrapped(font, text.c_str(), color, wrap_size);
 			break;
 		default:
 			break;
@@ -111,6 +130,8 @@ void Text::RemakeTexture() {
 		printf("Error loading Texture: %s", SDL_GetError());
 		std::abort();
 	}
+	SDL_QueryTexture(texture, nullptr, nullptr, &width, &height);
+  
 
 	associated.lock()->box.h = surf->h;
 	associated.lock()->box.w = surf->w;

@@ -5,72 +5,6 @@
 #include "../../Componentes/Player/Player.hpp"
 #include "../../Componentes/CameraFollower/CameraFollower.hpp"
 
-class MovingObject : public Component
-{
-public:
-    Timer keyCoolDown;
-    MovingObject(std::string file, std::weak_ptr<GameObject> associated) : Component(associated)
-    {
-        Sprite *tree = new Sprite(file, associated);
-        tree->SetScaleX(4, 4);
-        associated.lock()->AddComponent(tree);
-    }
-
-    void Update(float dt)
-    {
-        keyCoolDown.Update(dt);
-        InputManager &input = InputManager::GetInstance();
-        if (keyCoolDown.Get() < 0.05f)
-        {
-            return;
-        }
-
-        if (input.IsKeyDown(SDLK_SPACE))
-        {
-            Rect pos = associated.lock()->box;
-            printf("%0.1lf, %0.1lf\n", pos.x, pos.y);
-        }
-
-        keyCoolDown.Restart();
-
-        bool up = input.IsKeyDown(SDLK_w);
-        bool down = input.IsKeyDown(SDLK_s);
-        bool left = input.IsKeyDown(SDLK_a);
-        bool right = input.IsKeyDown(SDLK_d);
-
-        int walk = 4;
-
-        if (input.IsKeyDown(SDLK_LSHIFT))
-        {
-            walk = 12;
-        }
-
-        if (up)
-        {
-            associated.lock()->box.y -= walk;
-        }
-        else if (down)
-        {
-            associated.lock()->box.y += walk;
-        }
-        else if (left)
-        {
-            associated.lock()->box.x -= walk;
-        }
-        else if (right)
-        {
-            associated.lock()->box.x += walk;
-        }
-    }
-
-    void Render() {}
-
-    bool Is(std::string type)
-    {
-        return type == "Arvore";
-    }
-};
-
 static std::array<Vec2, 7> pos_pilar_1 =
     {
         Vec2(360.0, -60.0),
@@ -103,8 +37,8 @@ PreguicaState::PreguicaState()
     goPtr = this->AddObject(go);
     auto *player = new Player(goPtr);
     go->AddComponent(player);
-    go->box.x = 712;
-    go->box.y = 1500;
+    go->box.x = 700;
+    go->box.y = 1400;
     go->AddComponent(new Collider(goPtr, {0.3, 0.3}, {64, 72}));
     Camera::GetInstance().Follow(go);
     player->SetView(game_view);
@@ -117,14 +51,6 @@ PreguicaState::PreguicaState()
     go->box.x = 690;
     go->box.y = 100;
 
-    // go = new GameObject();
-    // go->Depth = Dynamic;
-    // go->AddComponent(new MovingObject("Assets/Cenario/Sprite-agua_lago1.png",this->AddObject(go)));
-    // go->box.x = 800;
-    // go->box.y = 800;
-    // Camera::GetInstance().Follow(go);
-
-
     go = new GameObject();
     go->Depth = Normal;
     Sprite *lago = new Sprite("Assets/Cenario/Sprite-agua_lago1.png", this->AddObject(go), 2, 0.8);
@@ -133,13 +59,22 @@ PreguicaState::PreguicaState()
     go->box.x = 1080.0;
     go->box.y = 648.0;
 
+
+    go = new GameObject();
+    go->Depth = Dynamic;
+    Sprite *tv = new Sprite("Assets/Cenario/television.png", this->AddObject(go));
+    tv->SetScaleX(4, 4);
+    go->AddComponent(tv);
+    go->box.x = 648;
+    go->box.y = 216;
+
     go = new GameObject();
     go->Depth = Dynamic;
     Sprite *ossos = new Sprite("Assets/Cenario/ossos_de_animal.png", this->AddObject(go));
     ossos->SetScaleX(4, 4);
     go->AddComponent(ossos);
-    go->box.x = 1084.0;
-    go->box.y = 496.0;
+    go->box.x = 1084;
+    go->box.y = 496;
 
     for (auto &pos : pos_pilar_1)
     {

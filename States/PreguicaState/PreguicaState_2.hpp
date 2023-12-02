@@ -1,14 +1,13 @@
 #pragma once
 
 #include "../State/State.hpp"
-#include "../../Componentes/Dialog/Dialog.hpp"
-#include "../../Componentes/Luxuria/Luxuria.hpp"
+#include "../../Componentes/Preguica/Preguica.hpp"
 #include "../../Componentes/Player/Player.hpp"
 
-class LuxuriaState : public State {
+class PreguicaState_2 : public State {
 public:
-    LuxuriaState ();
-    ~LuxuriaState();
+    PreguicaState_2();
+    ~PreguicaState_2();
 
     void LoadAssets () override;
     void Update (float dt) override;
@@ -21,12 +20,8 @@ public:
 private:
     Music backgroundMusic;
 
-    Dialog * luxuria_dialog;
-
-    Luxuria * luxuria;
-    Sprite *luxuria_dialog_animation;
-
-
     Player * player;
+    Sprite * player_health_bar;
+    std::weak_ptr<GameObject> player_goPtr;
 
 };

@@ -10,12 +10,12 @@
 #include "../../Utils/Timer/Timer.hpp"
 
 #include <memory>
-#include <string_view>
+#include <string>
 
 struct dialog_info{
     // Sprite * character_emotion;
-    std::string_view character_name;
-    std::string_view character_msg;
+    std::string character_name;
+    std::string character_msg;
 };
 
 class Dialog : public Component

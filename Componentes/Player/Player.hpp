@@ -36,7 +36,7 @@ public:
     Vec2 Position();
     void ShowSprite(Sprite *spr);
     void SetView(Rect max_view);
-    int GetHp();
+    int& GetHp();
 
 private:
     Rect max_view;

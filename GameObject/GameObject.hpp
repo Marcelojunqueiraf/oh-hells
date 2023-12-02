@@ -23,7 +23,7 @@ private:
 
 public:
   DepthMode Depth = Normal;
-  Rect box;
+  Rect box = {0,0,0,0};
   float angle;
   GameObject();
   ~GameObject();

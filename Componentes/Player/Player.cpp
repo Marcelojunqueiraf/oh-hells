@@ -233,7 +233,7 @@ void Player::Update(float dt)
     max_view.h-SPRITE_HEIGHT+SPRITE_WHITE_SPACE : player_pos.y;
 }
 
-int Player::GetHp()
+int& Player::GetHp()
 {
     return hp;
 }

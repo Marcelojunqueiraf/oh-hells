@@ -1,13 +1,24 @@
 #include "Dialog.hpp"
+#include "../CameraFollower/CameraFollower.hpp"
 
 static Sprite *last_character_animation = nullptr;
 
 Dialog::Dialog(std::weak_ptr<GameObject> associated) 
 : Component(associated)
 {
+
     background = new Sprite("Assets/Menu_dialogo.png",associated);
+    background->SetScaleX((float)GAME_WIDTH/background->GetWidth(), (float)GAME_HEIGHT/background->GetHeight());
     associated.lock()->AddComponent(background);
+    associated.lock()->AddComponent(new CameraFollower(associated));
     background->show = false;
+    
+    character_name = new Text("Assets/Ubuntu-Regular.ttf", associated, 40, Text::BLENDED, "Chr name", {255, 255, 255, 255});
+    character_message = new Text("Assets/Ubuntu-Regular.ttf", associated, 20, Text::BLENDED, "Chr message", {255, 255, 255, 255}, 800);
+    character_name->SetScale(0.9,0.9);
+    character_message->SetScale(0.6,0.6);
+    character_name->show = false;
+    character_message->show = false;
 }
 
 Dialog::~Dialog(){}
@@ -20,14 +31,14 @@ void Dialog::Hide(){
 
 void Dialog::ShowDialog(Sprite * emotion, dialog_info dialog){
     background->show = true;
-
+    last_character_animation->show = false; 
     last_character_animation = emotion;
     last_character_animation->show = true;
 
-    character_name->SetText(dialog.character_name);
+    character_name->SetText(std::move(dialog.character_name));
     character_name->show = true;
 
-    character_message->SetText(dialog.character_msg);
+    character_message->SetText(std::move(dialog.character_msg));
     character_message->show = true;
 }
 
@@ -39,7 +50,9 @@ void Dialog::Update(float dt){
 }
 
 void Dialog::Render(){
-
+    last_character_animation->Render();
+    character_name->Render(390,380);
+    character_message->Render(390,430);
 }
 
 void Dialog::Start(){
