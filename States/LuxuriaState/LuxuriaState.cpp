@@ -11,7 +11,6 @@
 
 #include <array>
 
-
 // std::vector<dialog_info> luxuria_dialog_logic =
 // {
 //     {"Luxúria", "Ah, o meu convidado especial chegou! Fique à vontade. Quer um drink ou algo do tipo?"},
@@ -68,127 +67,10 @@
 
 //     {"Luxúria", "Enfim, sinto muito querido. Se quiser seu amuleto vai ter que pegar a força. Muita força~"},
 
-//     // [Animação com a Gota] 
+//     // [Animação com a Gota]
 
 //     {"Luxúria", "Pode vir! Vou garantir que não existe nunca mais escala 6X1 e que a liberdade não seja tirada desse mundo!"},
 // };
-
-static std::array<Vec2, 20> pos_pinheiros_1 =
-{
-    Vec2(738, 4),
-    Vec2(454, 100),
-    Vec2(618, 100),
-    Vec2(378, 176),
-    Vec2(606, 200),
-    Vec2(822, 160),
-    Vec2(726.0, 268.0),
-    Vec2(478.0, 228.0),
-    Vec2(498.0, 360.0),
-    Vec2(582.0, 412.0),
-    Vec2(742.0, 388.0),
-    Vec2(870.0, 444.0),
-    Vec2(694.0, 560.0),
-    Vec2(822.0, 636.0),
-    Vec2(134.0, 396.0),
-    Vec2(94.0, 540.0),
-    Vec2(194.0, 568.0),
-    Vec2(350.0, 732.0),
-    Vec2(154.0, 812.0),
-    Vec2(510.0, 840.0),
-};
-
-static std::array<Vec2, 12> pos_pinheiros_2 =
-{
-    Vec2(1072.0, 840.0),
-    Vec2(1408.0, 736.0),
-    Vec2(1532.0, 832.0),
-    Vec2(1648.0, 808.0),
-    Vec2(1412.0, 1112.0),
-    Vec2(1732.0, 1084.0),
-    Vec2(1572.0, 1288.0),
-    Vec2(1504.0, 1456.0),
-    Vec2(884.0, 1096.0),
-    Vec2(956.0, 1328.0),
-    Vec2(1184.0, 1356.0),
-    Vec2(1112.0, 1560.0)
-};
-
-static std::array<Vec2, 8> pos_arv_seca_1 =
-{
-    Vec2(1252.0, 716.0),
-    Vec2(1424.0, 880.0),
-    Vec2(1252.0, 1024.0),
-    Vec2(1576.0, 1040.0),
-    Vec2(1124.0, 1196.0),
-    Vec2(1356.0, 1412.0),
-    Vec2(1420.0, 1588.0),
-    Vec2(1612.0, 1580.0)
-};
-
-
-class MovingObject: public Component{
-public:
-    Timer keyCoolDown;
-    MovingObject(std::string file, std::weak_ptr<GameObject> associated): Component(associated){
-        Sprite * tree = new Sprite(file, associated);
-        tree->SetScaleX(4,4);
-        associated.lock()->AddComponent(tree);
-    }
-
-    void Update(float dt){
-        keyCoolDown.Update(dt);
-        InputManager &input = InputManager::GetInstance();
-        if(keyCoolDown.Get() < 0.05f){
-            return;
-        }
-
-        if(input.IsKeyDown(SDLK_SPACE)){
-            Rect pos = associated.lock()->box;
-            printf("%0.1lf, %0.1lf\n", pos.x, pos.y);
-        }
-
-        keyCoolDown.Restart();
-
-        bool up = input.IsKeyDown(SDLK_w);
-        bool down = input.IsKeyDown(SDLK_s);
-        bool left = input.IsKeyDown(SDLK_a);
-        bool right = input.IsKeyDown(SDLK_d);
-
-        int walk = 4;
-
-        if(input.IsKeyDown(SDLK_LSHIFT)){
-            walk = 12;   
-        }
-
-        if (up)
-        {
-            associated.lock()->box.y -= walk;
-        }
-        else if (down)
-        {
-            associated.lock()->box.y += walk;
-        }
-        else if (left)
-        {
-            associated.lock()->box.x -= walk;
-        }
-        else if (right)
-        {
-            associated.lock()->box.x += walk;
-        }
-
-    }
-
-    void Render(){}
-
-    bool Is(std::string type){
-        return type == "Arvore";
-    }
-    
-};
-
-
-
 
 LuxuriaState::LuxuriaState()
 {
@@ -198,31 +80,25 @@ LuxuriaState::LuxuriaState()
     go->AddComponent(bg);
     go->AddComponent(new CameraFollower(goPtr));
 
-
     // Adicionando mapa
     bg = new Sprite("Assets/Cenario/mapa_portal_preguica.png", this->AddObject(new GameObject()));
     bg->SetScaleX(4, 4);
     go->AddComponent(bg);
 
-    // Seta a camera pra ter um limite maximo de visao 
-    Rect game_view = {0,0, bg->GetWidth(), bg->GetHeight()};
-    Camera::GetInstance().SetView(game_view); // Seta com o tamanho da imagem
-
+    game_view = {0, 0, (float)bg->GetWidth(), (float)bg->GetHeight()};
 
     go = new GameObject();
     go->Depth = Dynamic;
     player_goPtr = this->AddObject(go);
     player = new Player(player_goPtr);
+    player->SetPosition(512, 300);
     go->AddComponent(player);
     go->AddComponent(new HealthBar("Assets/barra_player.png", player_goPtr, player->GetHp()));
     go->AddComponent(new Collider(player_goPtr, {0.3, 0.3}, Vec2(64, 72)));
-    Camera::GetInstance().Follow(player_goPtr);
-    go->box.x = 512;
-    go->box.y = 300;
+    player->SetView(game_view); // Seta o player pra andar em um limite espaco
 
-    // Seta o player pra andar em um limite espaco
-    player->SetView(game_view);
-
+    Camera::GetInstance().SetView(game_view); // Seta com o tamanho da imagem
+    // Camera::GetInstance().Follow(player_goPtr);
 
     go = new GameObject();
     go->Depth = Top;
@@ -231,10 +107,9 @@ LuxuriaState::LuxuriaState()
     goPtr = this->AddObject(go);
     luxuria_dialog = new Dialog(goPtr);
     luxuria_dialog_animation = new Sprite("Assets/luxuria_dialog.png", goPtr);
-    luxuria_dialog_animation->SetScaleX((float)GAME_WIDTH/luxuria_dialog_animation->GetWidth(), (float)GAME_HEIGHT/luxuria_dialog_animation->GetHeight());
+    luxuria_dialog_animation->SetScaleX((float)GAME_WIDTH / luxuria_dialog_animation->GetWidth(), (float)GAME_HEIGHT / luxuria_dialog_animation->GetHeight());
     go->AddComponent(luxuria_dialog);
     luxuria_dialog->ShowDialog(luxuria_dialog_animation, "Luxúria", "Ah, o meu convidado especial chegou! Fique à vontade. Quer um drink ou algo do tipo?");
-
 
     go = new GameObject();
     go->Depth = Dynamic;
@@ -253,46 +128,13 @@ LuxuriaState::LuxuriaState()
     // go->box.y = 800;
     // Camera::GetInstance().Follow(go);
 
-
     go = new GameObject();
     go->Depth = Dynamic;
-    Sprite * tree = new Sprite("Assets/Cenario/portal.png", this->AddObject(go));
-    tree->SetScaleX(4,4);
+    Sprite *tree = new Sprite("Assets/Cenario/portal.png", this->AddObject(go));
+    tree->SetScaleX(4, 4);
     go->AddComponent(tree);
     go->box.x = 4;
     go->box.y = 56;
-
-    for(auto & pos: pos_pinheiros_1){
-        go = new GameObject();
-        go->Depth = Dynamic;
-        Sprite * tree = new Sprite("Assets/Cenario/arvore_1.png", this->AddObject(go));
-        tree->SetScaleX(4,4);
-        go->AddComponent(tree);
-        go->box.x = pos.x - 82;
-        go->box.y = pos.y - 108;
-    }
-
-    for(auto & pos: pos_pinheiros_2){
-        go = new GameObject();
-        go->Depth = Dynamic;
-        Sprite * tree = new Sprite("Assets/Cenario/arvore_2.png", this->AddObject(go));
-        tree->SetScaleX(4,4);
-        go->AddComponent(tree);
-        go->box.x = pos.x;
-        go->box.y = pos.y;
-    }
-
-    for(auto & pos: pos_arv_seca_1){
-        go = new GameObject();
-        go->Depth = Dynamic;
-        Sprite * tree = new Sprite("Assets/Cenario/arvore_seca_2.png", this->AddObject(go));
-        tree->SetScaleX(4,4);
-        go->AddComponent(tree);
-        go->box.x = pos.x;
-        go->box.y = pos.y;
-    }
-
-
 }
 
 LuxuriaState::~LuxuriaState()
@@ -322,7 +164,8 @@ void LuxuriaState::Update(float dt)
     UpdateArray(dt);
 
     /* Verifica aqui se o jogo acabou */
-    if(luxuria->GetHp() <= 0){
+    if (luxuria->GetHp() <= 0)
+    {
         backgroundMusic.Stop();
     }
 
@@ -334,25 +177,24 @@ void LuxuriaState::Update(float dt)
 void LuxuriaState::Render()
 {
 
-    std::stable_sort(objectArray.begin()+2, objectArray.end(), [](const std::shared_ptr<GameObject> A, const std::shared_ptr<GameObject> B) 
-    {
-            if (A->Depth < B->Depth)
-                return true;
-            if (A->Depth > B->Depth)
-                return false;
-            if (A->Depth == Dynamic && B->Depth == Dynamic)
-            {
-                return A->box.y + A->box.h < B->box.y + B->box.h;
-            }
-            return false;
-            // return A->GetLayer() < B->GetLayer();
-    });
+    std::stable_sort(objectArray.begin() + 2, objectArray.end(), [](const std::shared_ptr<GameObject> A, const std::shared_ptr<GameObject> B)
+                     {
+                         if (A->Depth < B->Depth)
+                             return true;
+                         if (A->Depth > B->Depth)
+                             return false;
+                         if (A->Depth == Dynamic && B->Depth == Dynamic)
+                         {
+                             return A->box.y + A->box.h < B->box.y + B->box.h;
+                         }
+                         return false;
+                         // return A->GetLayer() < B->GetLayer();
+                     });
 
     for (auto &it : objectArray)
     {
         it->Render();
     }
-
 }
 
 void LuxuriaState::Start()
@@ -360,14 +202,19 @@ void LuxuriaState::Start()
     StartArray();
     LoadAssets();
     backgroundMusic.Play();
+    Camera::GetInstance().SetView(game_view);
+    Camera::GetInstance().Follow(player_goPtr);
 }
 
 void LuxuriaState::Pause()
 {
     backgroundMusic.Stop();
+    Camera::GetInstance().Unfollow();
 }
 
 void LuxuriaState::Resume()
 {
     backgroundMusic.Play();
+    Camera::GetInstance().SetView(game_view); // Seta com o tamanho da imagem
+    Camera::GetInstance().Follow(player_goPtr);
 }
