@@ -5,14 +5,15 @@
 #include "../../Componentes/Preguica/Preguica.hpp"
 #include "../../Componentes/Player/Player.hpp"
 
-class PreguicaState : public State {
+class PreguicaState : public State
+{
 public:
-    PreguicaState ();
+    PreguicaState();
     ~PreguicaState();
 
-    void LoadAssets () override;
-    void Update (float dt) override;
-    void Render () override;
+    void LoadAssets() override;
+    void Update(float dt) override;
+    void Render() override;
 
     void Start() override;
     void Pause() override;
@@ -20,9 +21,9 @@ public:
 
 private:
     Rect game_view;
-    Music& backgroundMusic;
+    Music &backgroundMusic;
 
-    Player * player;
+    Player *player;
     std::weak_ptr<GameObject> player_goPtr;
 
     bool dialog_finished = false;
@@ -30,7 +31,6 @@ private:
     size_t dialog_index = 0;
     Timer dialogCooldown;
 
-    Dialog * preguica_dialog;
-    Sprite * preguica_dialog_animation;
-
+    Dialog *preguica_dialog;
+    Sprite *preguica_dialog_animation;
 };

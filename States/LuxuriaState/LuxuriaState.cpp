@@ -93,7 +93,7 @@ LuxuriaState::LuxuriaState()
     player = new Player(player_goPtr);
     player->SetPosition(512, 300);
     go->AddComponent(player);
-    go->AddComponent(new HealthBar("Assets/barra_player.png", player_goPtr, player->GetHp(), player->GetHp()));
+    go->AddComponent(new HealthBar(player_goPtr, player->GetHp(), player->GetHp()));
     go->AddComponent(new Collider(player_goPtr, {0.3, 0.3}, Vec2(64, 72)));
     player->SetView(game_view); // Seta o player pra andar em um limite espaco
 
@@ -116,7 +116,7 @@ LuxuriaState::LuxuriaState()
     auto luxuria_goPtr = this->AddObject(go);
     luxuria = new Luxuria(luxuria_goPtr, 100, player_goPtr);
     go->AddComponent(luxuria);
-    go->AddComponent(new HealthBar("Assets/barra_inimiga.png", luxuria_goPtr, luxuria->GetHp(), luxuria->GetHp()));
+    go->AddComponent(new HealthBar(luxuria_goPtr, luxuria->GetHp(), luxuria->GetHp()));
     go->AddComponent(new Collider(luxuria_goPtr, {0.3, 0.3}, Vec2(64, 72)));
     go->box.x = 300;
     go->box.y = 500;

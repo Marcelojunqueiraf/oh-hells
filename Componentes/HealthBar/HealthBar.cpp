@@ -1,7 +1,7 @@
 #include "HealthBar.hpp"
 #include "../../Camera/Camera.hpp"
 
-HealthBar::HealthBar(std::string file, std::weak_ptr<GameObject> associated, int &hp, int maxHp) : Component(associated), hp(hp), maxHp(maxHp)
+HealthBar::HealthBar(std::weak_ptr<GameObject> associated, int &hp, int maxHp) : Component(associated), hp(hp), maxHp(maxHp)
 {
 }
 

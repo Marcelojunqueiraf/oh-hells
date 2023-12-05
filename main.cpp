@@ -1,5 +1,6 @@
 #include "Game/Game.hpp"
 #include "States/TitleState/TitleState.hpp"
+#include "States/PreguicaState/PreguicaState.hpp"
 
 int main()
 {

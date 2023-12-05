@@ -98,7 +98,7 @@ PreguicaState_1::PreguicaState_1() : backgroundMusic(Game::GetInstance()->backgr
     player = new Player(player_goPtr);
     player->SetPosition(512, 300);
     go->AddComponent(player);
-    go->AddComponent(new HealthBar("Assets/barra_player.png", player_goPtr, player->GetHp(), player->GetHp()));
+    go->AddComponent(new HealthBar(player_goPtr, player->GetHp(), player->GetHp()));
     go->AddComponent(new Collider(player_goPtr, {0.3, 0.3}, Vec2(64, 72)));
     player->SetView(game_view); // Seta o player pra andar em um limite espaco
 

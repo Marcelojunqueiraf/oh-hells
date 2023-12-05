@@ -8,18 +8,18 @@
 #include "../../Camera/Camera.hpp"
 #include "../RegularBullet/RegularBullet.hpp"
 #include "../../Utils/Timer/Timer.hpp"
-#include "../../Componentes/Minion/Minion.hpp"
+#include "../HealthBar/HealthBar.hpp"
 
 #include <memory>
 
 class Sprite;
 
-class Preguica : public Component
+class Minion : public Component
 {
 
 public:
-    Preguica(std::weak_ptr<GameObject> associated, int hp, std::weak_ptr<GameObject> player_go);
-    ~Preguica();
+    Minion(std::weak_ptr<GameObject> associated, int hp, std::weak_ptr<GameObject> player_go);
+    ~Minion();
     void Update(float dt);
     bool Is(std::string type);
     void NotifyCollision(std::weak_ptr<GameObject> other);
@@ -28,19 +28,9 @@ public:
     void TakeDamage(int damage);
 
 private:
-    enum FASES
-    {
-        ESPERANDO,
-        TIRO,
-        MINION,
-        CIRCULO
-    };
-
     int hp;
     std::weak_ptr<GameObject> player_go;
-    Timer shootCooldown, moveCooldown;
+    Timer shootCooldown;
     Timer hitTimer;
     Sprite *idle_animation, *hit_animation;
-    int currentPosition;
-    FASES fase;
 };

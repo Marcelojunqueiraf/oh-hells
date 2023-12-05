@@ -19,7 +19,7 @@ private:
   int initial_hp;
 
 public:
-  HealthBar(std::string file, std::weak_ptr<GameObject> associated, int &hp, int maxHp);
+  HealthBar(std::weak_ptr<GameObject> associated, int &hp, int maxHp);
   ~HealthBar();
   void Start();
 
