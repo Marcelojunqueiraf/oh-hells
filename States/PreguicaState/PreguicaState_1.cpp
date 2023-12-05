@@ -12,60 +12,56 @@
 #include <array>
 
 static std::array<Vec2, 20> pos_pinheiros_1 =
-{
-    Vec2(738, 4),
-    Vec2(454, 100),
-    Vec2(618, 100),
-    Vec2(378, 176),
-    Vec2(606, 200),
-    Vec2(822, 160),
-    Vec2(726.0, 268.0),
-    Vec2(478.0, 228.0),
-    Vec2(498.0, 360.0),
-    Vec2(582.0, 412.0),
-    Vec2(742.0, 388.0),
-    Vec2(870.0, 444.0),
-    Vec2(694.0, 560.0),
-    Vec2(822.0, 636.0),
-    Vec2(134.0, 396.0),
-    Vec2(94.0, 540.0),
-    Vec2(194.0, 568.0),
-    Vec2(350.0, 732.0),
-    Vec2(154.0, 812.0),
-    Vec2(510.0, 840.0),
+    {
+        Vec2(738, 4),
+        Vec2(454, 100),
+        Vec2(618, 100),
+        Vec2(378, 176),
+        Vec2(606, 200),
+        Vec2(822, 160),
+        Vec2(726.0, 268.0),
+        Vec2(478.0, 228.0),
+        Vec2(498.0, 360.0),
+        Vec2(582.0, 412.0),
+        Vec2(742.0, 388.0),
+        Vec2(870.0, 444.0),
+        Vec2(694.0, 560.0),
+        Vec2(822.0, 636.0),
+        Vec2(134.0, 396.0),
+        Vec2(94.0, 540.0),
+        Vec2(194.0, 568.0),
+        Vec2(350.0, 732.0),
+        Vec2(154.0, 812.0),
+        Vec2(510.0, 840.0),
 };
 
 static std::array<Vec2, 12> pos_pinheiros_2 =
-{
-    Vec2(1072.0, 840.0),
-    Vec2(1408.0, 736.0),
-    Vec2(1532.0, 832.0),
-    Vec2(1648.0, 808.0),
-    Vec2(1412.0, 1112.0),
-    Vec2(1732.0, 1084.0),
-    Vec2(1572.0, 1288.0),
-    Vec2(1504.0, 1456.0),
-    Vec2(884.0, 1096.0),
-    Vec2(956.0, 1328.0),
-    Vec2(1184.0, 1356.0),
-    Vec2(1112.0, 1560.0)
-};
+    {
+        Vec2(1072.0, 840.0),
+        Vec2(1408.0, 736.0),
+        Vec2(1532.0, 832.0),
+        Vec2(1648.0, 808.0),
+        Vec2(1412.0, 1112.0),
+        Vec2(1732.0, 1084.0),
+        Vec2(1572.0, 1288.0),
+        Vec2(1504.0, 1456.0),
+        Vec2(884.0, 1096.0),
+        Vec2(956.0, 1328.0),
+        Vec2(1184.0, 1356.0),
+        Vec2(1112.0, 1560.0)};
 
 static std::array<Vec2, 8> pos_arv_seca_1 =
-{
-    Vec2(1252.0, 716.0),
-    Vec2(1424.0, 880.0),
-    Vec2(1252.0, 1024.0),
-    Vec2(1576.0, 1040.0),
-    Vec2(1124.0, 1196.0),
-    Vec2(1356.0, 1412.0),
-    Vec2(1420.0, 1588.0),
-    Vec2(1612.0, 1580.0)
-};
+    {
+        Vec2(1252.0, 716.0),
+        Vec2(1424.0, 880.0),
+        Vec2(1252.0, 1024.0),
+        Vec2(1576.0, 1040.0),
+        Vec2(1124.0, 1196.0),
+        Vec2(1356.0, 1412.0),
+        Vec2(1420.0, 1588.0),
+        Vec2(1612.0, 1580.0)};
 
-
-
-PreguicaState_1::PreguicaState_1(): backgroundMusic(Game::GetInstance()->backgroundMusic)
+PreguicaState_1::PreguicaState_1() : backgroundMusic(Game::GetInstance()->backgroundMusic)
 {
     GameObject *go = new GameObject();
     std::weak_ptr<GameObject> goPtr = this->AddObject(go);
@@ -80,21 +76,21 @@ PreguicaState_1::PreguicaState_1(): backgroundMusic(Game::GetInstance()->backgro
 
     // Teleporte de mapa
     go = new GameObject();
-    go->box = {1780, 880, 10,800};
+    go->box = {1780, 880, 10, 800};
     goPtr = this->AddObject(go);
-    go->AddComponent(new ActionCollider(goPtr, {1, 1}, Vec2(0, 0), this, 
-    [](State * state, std::weak_ptr<GameObject> other){
-        Player *player = (Player *)other.lock()->GetComponent("Player").lock().get();
-        if(player){
-            player->SetPosition(1647, 1270);
-            Game::GetInstance()->Push(new PreguicaState_2());
-        }
-    }
-    ));
+    go->AddComponent(new ActionCollider(goPtr, {1, 1}, Vec2(0, 0), this,
+                                        [](State *state, std::weak_ptr<GameObject> other)
+                                        {
+                                            Player *player = (Player *)other.lock()->GetComponent("Player").lock().get();
+                                            if (player)
+                                            {
+                                                player->SetPosition(1647, 1270);
+                                                Game::GetInstance()->Push(new PreguicaState_2());
+                                            }
+                                        }));
 
-    // Seta a camera pra ter um limite maximo de visao 
-    game_view = {0,0, bg->GetWidth(), bg->GetHeight()};
-
+    // Seta a camera pra ter um limite maximo de visao
+    game_view = {0, 0, (float)bg->GetWidth(), (float)bg->GetHeight()};
 
     go = new GameObject();
     go->Depth = Dynamic;
@@ -102,9 +98,9 @@ PreguicaState_1::PreguicaState_1(): backgroundMusic(Game::GetInstance()->backgro
     player = new Player(player_goPtr);
     player->SetPosition(512, 300);
     go->AddComponent(player);
-    go->AddComponent(new HealthBar("Assets/barra_player.png", player_goPtr, player->GetHp()));
+    go->AddComponent(new HealthBar("Assets/barra_player.png", player_goPtr, player->GetHp(), player->GetHp()));
     go->AddComponent(new Collider(player_goPtr, {0.3, 0.3}, Vec2(64, 72)));
-    player->SetView(game_view);// Seta o player pra andar em um limite espaco
+    player->SetView(game_view); // Seta o player pra andar em um limite espaco
 
     // go = new GameObject();
     // go->Depth = Dynamic;
@@ -115,43 +111,44 @@ PreguicaState_1::PreguicaState_1(): backgroundMusic(Game::GetInstance()->backgro
 
     go = new GameObject();
     go->Depth = Dynamic;
-    Sprite * tree = new Sprite("Assets/Cenario/portal.png", this->AddObject(go));
-    tree->SetScaleX(4,4);
+    Sprite *tree = new Sprite("Assets/Cenario/portal.png", this->AddObject(go));
+    tree->SetScaleX(4, 4);
     go->AddComponent(tree);
     go->box.x = 4;
     go->box.y = 56;
 
-    for(auto & pos: pos_pinheiros_1){
+    for (auto &pos : pos_pinheiros_1)
+    {
         go = new GameObject();
         go->Depth = Dynamic;
-        Sprite * tree = new Sprite("Assets/Cenario/arvore_1.png", this->AddObject(go));
-        tree->SetScaleX(4,4);
+        Sprite *tree = new Sprite("Assets/Cenario/arvore_1.png", this->AddObject(go));
+        tree->SetScaleX(4, 4);
         go->AddComponent(tree);
         go->box.x = pos.x - 82;
         go->box.y = pos.y - 108;
     }
 
-    for(auto & pos: pos_pinheiros_2){
+    for (auto &pos : pos_pinheiros_2)
+    {
         go = new GameObject();
         go->Depth = Dynamic;
-        Sprite * tree = new Sprite("Assets/Cenario/arvore_2.png", this->AddObject(go));
-        tree->SetScaleX(4,4);
+        Sprite *tree = new Sprite("Assets/Cenario/arvore_2.png", this->AddObject(go));
+        tree->SetScaleX(4, 4);
         go->AddComponent(tree);
         go->box.x = pos.x;
         go->box.y = pos.y;
     }
 
-    for(auto & pos: pos_arv_seca_1){
+    for (auto &pos : pos_arv_seca_1)
+    {
         go = new GameObject();
         go->Depth = Dynamic;
-        Sprite * tree = new Sprite("Assets/Cenario/arvore_seca_2.png", this->AddObject(go));
-        tree->SetScaleX(4,4);
+        Sprite *tree = new Sprite("Assets/Cenario/arvore_seca_2.png", this->AddObject(go));
+        tree->SetScaleX(4, 4);
         go->AddComponent(tree);
         go->box.x = pos.x;
         go->box.y = pos.y;
     }
-
-
 }
 
 PreguicaState_1::~PreguicaState_1()
@@ -180,32 +177,31 @@ void PreguicaState_1::Update(float dt)
     UpdateArray(dt);
 
     /* Verifica aqui se o jogo acabou */
-    
+
     VerifyCollision();
 }
 
 void PreguicaState_1::Render()
 {
 
-    std::stable_sort(objectArray.begin()+2, objectArray.end(), [](const std::shared_ptr<GameObject> A, const std::shared_ptr<GameObject> B) 
-    {
-            if (A->Depth < B->Depth)
-                return true;
-            if (A->Depth > B->Depth)
-                return false;
-            if (A->Depth == Dynamic && B->Depth == Dynamic)
-            {
-                return A->box.y + A->box.h < B->box.y + B->box.h;
-            }
-            return false;
-            // return A->GetLayer() < B->GetLayer();
-    });
+    std::stable_sort(objectArray.begin() + 2, objectArray.end(), [](const std::shared_ptr<GameObject> A, const std::shared_ptr<GameObject> B)
+                     {
+                         if (A->Depth < B->Depth)
+                             return true;
+                         if (A->Depth > B->Depth)
+                             return false;
+                         if (A->Depth == Dynamic && B->Depth == Dynamic)
+                         {
+                             return A->box.y + A->box.h < B->box.y + B->box.h;
+                         }
+                         return false;
+                         // return A->GetLayer() < B->GetLayer();
+                     });
 
     for (auto &it : objectArray)
     {
         it->Render();
     }
-
 }
 
 void PreguicaState_1::Start()

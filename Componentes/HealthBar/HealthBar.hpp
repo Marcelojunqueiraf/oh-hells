@@ -6,19 +6,20 @@
 #include "../../Game/Game.hpp"
 #include "../../GameObject/GameObject.hpp"
 #include "../../Utils/Resources/Resources.hpp"
-
+#include "../../Game/Game.hpp"
 
 #include <iostream>
 
 class HealthBar : public Component
 {
 private:
-  Sprite * health_bar;
-  int& hp;
+  Sprite *health_bar;
+  int &hp;
+  int maxHp;
   int initial_hp;
 
 public:
-  HealthBar(std::string file, std::weak_ptr<GameObject> associated, int& hp);
+  HealthBar(std::string file, std::weak_ptr<GameObject> associated, int &hp, int maxHp);
   ~HealthBar();
   void Start();
 

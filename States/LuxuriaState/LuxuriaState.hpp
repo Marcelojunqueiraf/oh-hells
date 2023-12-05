@@ -5,14 +5,15 @@
 #include "../../Componentes/Luxuria/Luxuria.hpp"
 #include "../../Componentes/Player/Player.hpp"
 
-class LuxuriaState : public State {
+class LuxuriaState : public State
+{
 public:
-    LuxuriaState ();
+    LuxuriaState();
     ~LuxuriaState();
 
-    void LoadAssets () override;
-    void Update (float dt) override;
-    void Render () override;
+    void LoadAssets() override;
+    void Update(float dt) override;
+    void Render() override;
 
     void Start() override;
     void Pause() override;
@@ -21,13 +22,12 @@ public:
 private:
     Music backgroundMusic;
 
-    Dialog * luxuria_dialog;
+    Dialog *luxuria_dialog;
 
-    Luxuria * luxuria;
+    Luxuria *luxuria;
     Sprite *luxuria_dialog_animation;
 
-
-    Player * player;
+    Rect game_view;
+    Player *player;
     std::weak_ptr<GameObject> player_goPtr;
-
 };
