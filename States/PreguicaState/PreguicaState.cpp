@@ -19,11 +19,6 @@ static std::array<Vec2, 7> pos_pilar_1 =
         Vec2(1152.0, 1164.0),
 };
 
-static std::vector<dialog_info> roteiro_luxuria_dialog =
-    {
-        {2, "Preguiça", "Oh, tem alguem aqui."},
-        {5, "Preguiça", "Tem como esperar só um pouquinho? Eu to terminando um cochilo aqui."}};
-
 PreguicaState::PreguicaState() : backgroundMusic(Game::GetInstance()->backgroundMusic)
 {
     GameObject *go = new GameObject();
@@ -53,17 +48,6 @@ PreguicaState::PreguicaState() : backgroundMusic(Game::GetInstance()->background
                                                 state->popRequested = true;
                                             }
                                         }));
-
-    go = new GameObject();
-    go->Depth = Top;
-    go->box.x = 0;
-    go->box.y = 0;
-    goPtr = this->AddObject(go);
-    preguica_dialog = new Dialog(goPtr);
-    go->AddComponent(preguica_dialog);
-
-    preguica_dialog_animation = new Sprite("Assets/preguica_dialog.png", goPtr);
-    preguica_dialog_animation->SetScaleX((float)GAME_WIDTH / preguica_dialog_animation->GetWidth(), (float)GAME_HEIGHT / preguica_dialog_animation->GetHeight());
 
     go = new GameObject();
     go->Depth = Dynamic;
@@ -136,35 +120,12 @@ void PreguicaState::Update(float dt)
 {
 
     Camera::GetInstance().Update(dt);
-    dialogCooldown.Update(dt);
 
     auto input_manager = InputManager::GetInstance();
 
     quitRequested = input_manager.QuitRequested();
 
     // popRequested = input_manager.KeyPress(ESCAPE_KEY);
-
-    if (!dialog_finished)
-    {
-        if (dialogCooldown.Get() > dialog_time)
-        {
-            if (dialog_index >= roteiro_luxuria_dialog.size())
-            {
-                dialog_finished = true;
-                preguica_dialog->Hide();
-            }
-            else
-            {
-                auto &dialog_part = roteiro_luxuria_dialog[dialog_index++];
-                preguica_dialog->ShowDialog(
-                    preguica_dialog_animation,
-                    dialog_part.character_name,
-                    dialog_part.character_msg);
-                dialog_time = dialog_part.time;
-                dialogCooldown.Restart();
-            }
-        }
-    }
 
     UpdateArray(dt);
 

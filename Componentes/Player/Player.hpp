@@ -37,7 +37,7 @@ public:
     void ShowSprite(Sprite *spr);
     void SetView(Rect max_view);
     void SetPosition(int x, int y);
-    int& GetHp();
+    int &GetHp();
 
 private:
     Rect max_view;
@@ -55,6 +55,6 @@ private:
 
     bool dashed;
     bool died;
-    Timer attackCooldown;
+    Timer attackCooldown, dashTimer;
     Vec2 dash_direction;
 };

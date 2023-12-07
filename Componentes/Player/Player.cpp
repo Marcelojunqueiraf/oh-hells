@@ -1,14 +1,14 @@
 #include "Player.hpp"
 
-#define DASH_SPEED 15
-#define WALK_SPEED 5
+#define DASH_SPEED 500
+#define WALK_SPEED 200
 #define ATTACK_SPEED 0.7f
 #define ATTACK_DISTANCE 350
 
 #define SCALE 3
-#define SPRITE_WIDTH SCALE*64
-#define SPRITE_HEIGHT SCALE*64
-#define SPRITE_WHITE_SPACE SCALE*24
+#define SPRITE_WIDTH SCALE * 64
+#define SPRITE_HEIGHT SCALE * 64
+#define SPRITE_WHITE_SPACE SCALE * 24
 
 Player::Player(std::weak_ptr<GameObject> associated) : Component(associated),
                                                        speed(0, 0), linearSpeed(0), angle(0), hp(100)
@@ -68,6 +68,7 @@ Player::Player(std::weak_ptr<GameObject> associated) : Component(associated),
     attackCooldown = Timer();
     shootCooldown = Timer();
     hitTimer = Timer();
+    dashTimer = Timer();
 }
 
 Player::~Player()
@@ -85,13 +86,15 @@ void Player::ShowSprite(Sprite *spr)
     last_animation = spr;
 }
 
-void Player::SetPosition(int x, int y){
-    Rect& player_pos = associated.lock()->box;
+void Player::SetPosition(int x, int y)
+{
+    Rect &player_pos = associated.lock()->box;
     player_pos.x = x;
     player_pos.y = y;
 }
 
-void Player::SetView(Rect max_view){
+void Player::SetView(Rect max_view)
+{
     this->max_view = max_view;
 }
 
@@ -100,6 +103,7 @@ void Player::Update(float dt)
     hitTimer.Update(dt);
     shootCooldown.Update(dt);
     attackCooldown.Update(dt);
+    dashTimer.Update(dt);
 
     InputManager &input = InputManager::GetInstance();
 
@@ -108,14 +112,13 @@ void Player::Update(float dt)
     bool left = input.IsKeyDown(SDLK_a);
     bool right = input.IsKeyDown(SDLK_d);
 
+    // if (input.IsKeyDown(SDLK_SPACE))
+    // {
+    //     Rect pos = associated.lock()->box;
+    //     printf("%0.1lf, %0.1lf\n", pos.x, pos.y);
+    // }
 
-    if(input.IsKeyDown(SDLK_SPACE)){
-        Rect pos = associated.lock()->box;
-        printf("%0.1lf, %0.1lf\n", pos.x, pos.y);
-    }
-
-
-    Rect& player_pos = associated.lock()->box;
+    Rect &player_pos = associated.lock()->box;
 
     switch (state)
     {
@@ -141,59 +144,63 @@ void Player::Update(float dt)
             shootCooldown.Restart();
         }
 
-        if (input.IsMouseDown(3) && attackCooldown.Get() > ATTACK_SPEED)
+        if (input.IsKeyDown(SDLK_SPACE) && dashTimer.Get() > 1.0f)
         {
 
             state = DASHING;
             dash_direction = {0, 0};
             if (up)
             {
-                dash_direction.y -= DASH_SPEED;
+                dash_direction.y = -1;
                 ShowSprite(back_attack_animation);
             }
             else if (down)
             {
-                dash_direction.y += DASH_SPEED;
+                dash_direction.y = 1;
                 ShowSprite(front_attack_animation);
             }
 
             if (left)
             {
-                dash_direction.x -= DASH_SPEED;
+                dash_direction.x = -1;
                 ShowSprite(left_attack_animation);
             }
             else if (right)
             {
-                dash_direction.x += DASH_SPEED;
+                dash_direction.x = 1;
                 ShowSprite(right_attack_animation);
             }
-
-            attackCooldown.Restart();
+            dash_direction = dash_direction.normalize() * DASH_SPEED;
             sword_attack_sound->Play();
+            dashTimer.Restart();
         }
         else if ((up || down || left || right) && attackCooldown.Get() > ATTACK_SPEED)
         {
+            Vec2 velocity = {0, 0};
             if (up)
             {
-                associated.lock()->box.y -= WALK_SPEED;
+                velocity.y = -1;
                 ShowSprite(walk_back);
             }
             else if (down)
             {
-                associated.lock()->box.y += WALK_SPEED;
+                velocity.y = 1;
                 ShowSprite(walk_front);
             }
 
             if (left)
             {
-                associated.lock()->box.x -= WALK_SPEED;
+                velocity.x = -1;
                 ShowSprite(walk_left);
             }
             else if (right)
             {
-                associated.lock()->box.x += WALK_SPEED;
+                velocity.x = 1;
                 ShowSprite(walk_right);
             }
+            velocity = velocity.normalize() * WALK_SPEED * dt;
+
+            associated.lock()->box += velocity;
         }
         else
         {
@@ -208,10 +215,12 @@ void Player::Update(float dt)
         state = RESTING;
 
     case (DASHING):
-        if (attackCooldown.Get() > 0.7f)
+        if (dashTimer.Get() < 0.3f)
+            associated.lock()->box += dash_direction * dt;
+        else
+        {
             state = RESTING;
-        else if (attackCooldown.Get() < 0.2f)
-            associated.lock()->box += dash_direction;
+        }
         break;
 
     case (HITED):
@@ -229,20 +238,16 @@ void Player::Update(float dt)
         break;
     }
 
-    player_pos.x = (player_pos.x < max_view.x-SPRITE_WHITE_SPACE) ? 
-    max_view.x-SPRITE_WHITE_SPACE : player_pos.x;
+    player_pos.x = (player_pos.x < max_view.x - SPRITE_WHITE_SPACE) ? max_view.x - SPRITE_WHITE_SPACE : player_pos.x;
 
-    player_pos.x = (player_pos.x > max_view.w-SPRITE_WIDTH+SPRITE_WHITE_SPACE) ? 
-    max_view.w-SPRITE_WIDTH+SPRITE_WHITE_SPACE : player_pos.x;
+    player_pos.x = (player_pos.x > max_view.w - SPRITE_WIDTH + SPRITE_WHITE_SPACE) ? max_view.w - SPRITE_WIDTH + SPRITE_WHITE_SPACE : player_pos.x;
 
-    player_pos.y = (player_pos.y < max_view.y-SPRITE_WHITE_SPACE) ? 
-    max_view.y-SPRITE_WHITE_SPACE : player_pos.y;
+    player_pos.y = (player_pos.y < max_view.y - SPRITE_WHITE_SPACE) ? max_view.y - SPRITE_WHITE_SPACE : player_pos.y;
 
-    player_pos.y = (player_pos.y > max_view.h-SPRITE_HEIGHT+SPRITE_WHITE_SPACE) ? 
-    max_view.h-SPRITE_HEIGHT+SPRITE_WHITE_SPACE : player_pos.y;
+    player_pos.y = (player_pos.y > max_view.h - SPRITE_HEIGHT + SPRITE_WHITE_SPACE) ? max_view.h - SPRITE_HEIGHT + SPRITE_WHITE_SPACE : player_pos.y;
 }
 
-int& Player::GetHp()
+int &Player::GetHp()
 {
     return hp;
 }

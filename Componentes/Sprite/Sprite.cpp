@@ -57,7 +57,8 @@ void Sprite::SetClip(int x, int y, int w, int h)
 
 void Sprite::Render(int x, int y)
 {
-  if(show){
+  if (show)
+  {
     SDL_Rect dstrect;
     Camera &camera = Camera::GetInstance();
     dstrect.x = x - camera.pos.x;
@@ -87,7 +88,8 @@ bool Sprite::IsOpen()
 
 void Sprite::Update(float dt)
 {
-  if(show){
+  if (show)
+  {
     timeElapsed += dt;
     if (timeElapsed > frameTime)
     {
@@ -116,6 +118,8 @@ void Sprite::SetScaleX(float scaleX, float scaleY)
 {
   this->scale.x = scaleX;
   this->scale.y = scaleY;
+  if (associated.expired())
+    return;
   this->associated.lock()->box.w = this->width * scaleX;
   this->associated.lock()->box.h = this->height * scaleY;
 }

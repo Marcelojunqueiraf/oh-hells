@@ -33,14 +33,19 @@ private:
         ESPERANDO,
         TIRO,
         MINION,
-        CIRCULO
+        CIRCULO,
+        TORNADO,
+        MORRENDO,
     };
 
     int hp;
     std::weak_ptr<GameObject> player_go;
     Timer shootCooldown, moveCooldown;
     Timer hitTimer;
+    Timer dialogTimer;
     Sprite *idle_animation, *hit_animation;
     int currentPosition;
+
+    float shootAngle;
     FASES fase;
 };

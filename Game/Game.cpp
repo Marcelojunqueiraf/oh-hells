@@ -4,6 +4,11 @@
 #define DEBUG
 
 Game *Game::instance = nullptr;
+Sprite *Game::dialogImage = nullptr;
+Sprite *Game::dialogBackground = nullptr;
+std::string Game::character_name = "";
+std::string Game::character_msg = "";
+bool Game::show_dialog = false;
 
 Game::Game(std::string title, int width, int height)
 {
@@ -37,7 +42,6 @@ Game::Game(std::string title, int width, int height)
     std::cerr << SDL_GetError() << std::endl;
     std::terminate();
   }
-
 
   if (TTF_Init() != 0)
   {
@@ -75,50 +79,104 @@ Game *Game::GetInstance()
 
 void Game::Run()
 {
-  if (storedState != nullptr) {
-		stateStack.emplace(storedState);
-		storedState = nullptr;
-		stateStack.top()->Start();
-		while (!stateStack.top()->QuitRequested() && !stateStack.empty()) {
-			if (stateStack.top()->PopRequested()) {
-				stateStack.pop();
-				// Resources::ClearResources();
-				if (!stateStack.empty()) {
-					stateStack.top()->Resume();
-				}
-			}
+  // Game::SetDialog("Assets/preguica_dialog.png", "Character", "Message");
+  // Game::ShowDialog(true);
+  Game::dialogBackground = new Sprite("Assets/Menu_dialogo.png", std::weak_ptr<GameObject>());
+  Game::dialogBackground->SetScaleX((float)GAME_WIDTH / Game::dialogBackground->GetWidth(), (float)GAME_HEIGHT / Game::dialogBackground->GetHeight());
 
-			if (storedState != nullptr) {
-				if(!stateStack.empty()) stateStack.top()->Pause();
-				stateStack.emplace(storedState);
-				storedState = nullptr;
-				stateStack.top()->Start();
-			}
+  if (storedState != nullptr)
+  {
+    stateStack.emplace(storedState);
+    storedState = nullptr;
+    stateStack.top()->Start();
+    while (!stateStack.top()->QuitRequested() && !stateStack.empty())
+    {
+      if (stateStack.top()->PopRequested())
+      {
+        stateStack.pop();
+        // Resources::ClearResources();
+        if (!stateStack.empty())
+        {
+          stateStack.top()->Resume();
+        }
+      }
 
-			if (stateStack.empty()) break;
+      if (storedState != nullptr)
+      {
+        if (!stateStack.empty())
+          stateStack.top()->Pause();
+        stateStack.emplace(storedState);
+        storedState = nullptr;
+        stateStack.top()->Start();
+      }
 
-			CalculateDeltaTime();
-			InputManager::GetInstance().Update();
-			stateStack.top()->Update(dt);
-			stateStack.top()->Render();
-			SDL_RenderPresent(renderer.get());
-			SDL_Delay(33);
-		}
-	}
+      if (stateStack.empty())
+        break;
 
-	while (!stateStack.empty()) {
-		stateStack.pop();
-	}
+      CalculateDeltaTime();
+      InputManager::GetInstance().Update();
+      stateStack.top()->Update(dt);
+      stateStack.top()->Render();
+
+      if (show_dialog && Game::show_dialog)
+      {
+        Vec2 pos = Camera::GetInstance().pos;
+        Game::dialogBackground->Render(pos.x, pos.y);
+        Game::dialogImage->Render(pos.x, pos.y);
+
+        TTF_Font *Sans = TTF_OpenFont("Assets/Ubuntu-Regular.ttf", 28);
+
+        SDL_Color White = {255, 255, 255};
+
+        SDL_Surface *surfaceMessage =
+            TTF_RenderText_Solid(Sans, Game::character_name.c_str(), White);
+
+        SDL_Texture *Message = SDL_CreateTextureFromSurface(renderer.get(), surfaceMessage);
+
+        SDL_Rect Message_rect;              // create a rect
+        Message_rect.x = 395;               // controls the rect's x coordinate
+        Message_rect.y = 380;               // controls the rect's y coordinte
+        Message_rect.w = surfaceMessage->w; // controls the width of the rect
+        Message_rect.h = surfaceMessage->h; // controls the height of the rect
+
+        SDL_RenderCopy(renderer.get(), Message, NULL, &Message_rect);
+
+        surfaceMessage =
+            TTF_RenderText_Solid(Sans, Game::character_msg.c_str(), White);
+
+        Message = SDL_CreateTextureFromSurface(renderer.get(), surfaceMessage);
+
+        Message_rect.x = 400;               // controls the rect's x coordinate
+        Message_rect.y = 430;               // controls the rect's y coordinte
+        Message_rect.w = surfaceMessage->w; // controls the width of the rect
+        Message_rect.h = surfaceMessage->h; // controls the height of the rect
+
+        SDL_RenderCopy(renderer.get(), Message, NULL, &Message_rect);
+
+        SDL_FreeSurface(surfaceMessage);
+        SDL_DestroyTexture(Message);
+      }
+
+      SDL_RenderPresent(renderer.get());
+      SDL_Delay(33);
+    }
+  }
+
+  while (!stateStack.empty())
+  {
+    stateStack.pop();
+  }
 
   Resources::ClearResources();
 }
 
 Game::~Game()
 {
-	// Deletar State
-	if (storedState != nullptr) {
-		delete storedState;
-	}
+  // Deletar State
+  if (storedState != nullptr)
+  {
+    delete storedState;
+  }
 
   Mix_CloseAudio();
   Mix_Quit();
@@ -147,8 +205,9 @@ int Game::GetHeight()
   return h;
 }
 
-void Game::Push(State *state) {
-    storedState = state;
+void Game::Push(State *state)
+{
+  storedState = state;
 }
 
 std::weak_ptr<SDL_Renderer> Game::GetRenderer()
@@ -156,7 +215,28 @@ std::weak_ptr<SDL_Renderer> Game::GetRenderer()
   return renderer;
 }
 
-State& Game::GetCurrentState()
+State &Game::GetCurrentState()
 {
   return *(stateStack.top().get());
+}
+
+void Game::SetDialog(std::string image, std::string chr_name, std::string chr_msg)
+{
+  if (Game::dialogImage != nullptr)
+    free(Game::dialogImage);
+  Game::dialogImage = new Sprite(image, std::weak_ptr<GameObject>());
+  Game::dialogImage->SetScaleX((float)GAME_WIDTH / Game::dialogImage->GetWidth(), (float)GAME_HEIGHT / Game::dialogImage->GetHeight());
+  Game::character_name = chr_name;
+  Game::character_msg = chr_msg;
+}
+
+void Game::SetDialog(std::string chr_name, std::string chr_msg)
+{
+  Game::character_name = chr_name;
+  Game::character_msg = chr_msg;
+}
+
+void Game::ShowDialog(bool show)
+{
+  Game::show_dialog = show;
 }

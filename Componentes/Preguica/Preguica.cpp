@@ -14,7 +14,7 @@ Vec2 positions[] = {
 };
 
 Preguica::Preguica(std::weak_ptr<GameObject> associated, int hp, std::weak_ptr<GameObject> player_go) : Component(associated),
-                                                                                                        hp(5000), currentPosition(0), player_go(player_go), fase(ESPERANDO)
+                                                                                                        hp(5000), currentPosition(0), player_go(player_go), fase(ESPERANDO), shootAngle(0)
 {
     // hit_animation = new Sprite("Assets/Luxuria_front_hit.png", associated, 6, 0.1);
     // hit_animation->SetScaleX(3, 3);
@@ -28,6 +28,10 @@ Preguica::Preguica(std::weak_ptr<GameObject> associated, int hp, std::weak_ptr<G
 
     shootCooldown = Timer();
     hitTimer = Timer();
+    dialogTimer = Timer();
+
+    Game::SetDialog("Assets/preguica_dialog.png", "Preguica", "Oh, tem alguem aqui");
+    Game::ShowDialog(true);
 }
 
 Preguica::~Preguica()
@@ -36,16 +40,30 @@ Preguica::~Preguica()
 
 void Preguica::Update(float dt)
 {
+    dialogTimer.Update(dt);
+
     switch (fase)
     {
     case ESPERANDO:
     {
+        if (dialogTimer.Get() > 6)
+        {
+            Game::ShowDialog(false);
+        }
+        else if (dialogTimer.Get() > 3 && dialogTimer.Get() < 3.2f)
+        {
+            Game::SetDialog("Assets/preguica_dialog.png", "Preguica", "Tem como esperar? estou tirando um cochilo");
+        }
+
         Vec2 player_pos = player_go.lock()->box.GetCenter();
         Vec2 distance = player_pos - this->associated.lock()->box.GetCenter();
         if (hp < 4999)
         {
             hp = 5000;
             fase = CIRCULO;
+            dialogTimer.Restart();
+            Game::SetDialog("Assets/preguica_dialog.png", "Preguica", "Que deselegante, me acordou!");
+            Game::ShowDialog(true);
         }
         break;
     }
@@ -53,12 +71,22 @@ void Preguica::Update(float dt)
     {
         shootCooldown.Update(dt);
 
+        if (dialogTimer.Get() > 2)
+        {
+            Game::ShowDialog(false);
+        }
+
         if (hp <= 0)
         {
             hp = 5000;
             fase = MINION;
             associated.lock()->box.x = 690;
             associated.lock()->box.y = 100;
+
+            dialogTimer.Restart();
+            Game::SetDialog("Assets/preguica_dialog.png", "Preguica", "Minions, acabem com ele!");
+            Game::ShowDialog(true);
+
             break;
         }
 
@@ -99,10 +127,21 @@ void Preguica::Update(float dt)
     {
         shootCooldown.Update(dt);
 
+        if (dialogTimer.Get() > 3)
+        {
+            Game::ShowDialog(false);
+        }
+
         if (hp <= 0)
         {
             hp = 5000;
             fase = TIRO;
+
+            dialogTimer.Restart();
+            Game::SetDialog("Assets/preguica_dialog.png", "Preguica", "Se quer algo bem feito, faca voce mesmo!");
+            Game::ShowDialog(true);
+
+            break;
         }
 
         if (shootCooldown.Get() > 2.5f)
@@ -132,6 +171,11 @@ void Preguica::Update(float dt)
     case TIRO:
     {
 
+        if (dialogTimer.Get() > 2)
+        {
+            Game::ShowDialog(false);
+        }
+
         moveCooldown.Update(dt);
         shootCooldown.Update(dt);
 
@@ -139,11 +183,17 @@ void Preguica::Update(float dt)
         {
             moveCooldown.Restart();
             currentPosition = (currentPosition + 1) % 4;
+
+            break;
         }
 
         if (hp <= 0)
         {
-            associated.lock()->RequestDelete();
+            fase = MORRENDO;
+            hp = 5000;
+            dialogTimer.Restart();
+            Game::SetDialog("Assets/preguica_dialog.png", "Preguica", "Nunca vou te perdoaaaaar...");
+            Game::ShowDialog(true);
         }
 
         InputManager &input = InputManager::GetInstance();
@@ -179,8 +229,23 @@ void Preguica::Update(float dt)
         }
 
         ShowSprite(idle_animation);
+        break;
     }
-    break;
+    case MORRENDO:
+    {
+        if (hp <= 0)
+        {
+            Game::ShowDialog(false);
+            associated.lock()->RequestDelete();
+        }
+        associated.lock()->angle += 2 * M_PI * dt;
+        Sprite *playerSprite = (Sprite *)associated.lock()->GetComponent("Sprite").lock().get();
+        Vec2 currentScale = playerSprite->GetScale();
+        playerSprite->SetScaleX(currentScale.x * 0.99, currentScale.y * 0.99);
+
+        hp -= 2000 * dt;
+        break;
+    }
     }
 }
 
