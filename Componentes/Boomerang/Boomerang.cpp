@@ -23,9 +23,14 @@ void Boomerang::Update(float dt)
   }
   else
   {
-    distance = this->origin.lock()->box.GetCenter() - this->associated.lock()->box.GetCenter();
-    if ((origin.lock()->box.GetCenter() - this->associated.lock()->box.GetCenter()).magnitude() <= speed * dt)
-    {
+    if(!origin.expired()){
+      distance = this->origin.lock()->box.GetCenter() - this->associated.lock()->box.GetCenter();
+      if ((origin.lock()->box.GetCenter() - this->associated.lock()->box.GetCenter()).magnitude() <= speed * dt)
+      {
+        this->associated.lock()->RequestDelete();
+      }
+    }
+    else{
       this->associated.lock()->RequestDelete();
     }
   }
