@@ -32,11 +32,19 @@ private:
   void CalculateDeltaTime();
   Game(std::string title, int width, int height);
 
+
 public:
   static Sprite *dialogImage, *dialogBackground;
   static std::string character_name;
   static std::string character_msg;
   static bool show_dialog;
+
+  // Dialog_view
+  static TTF_Font *Sans;
+  static SDL_Texture * dialog_Message1;
+  static SDL_Texture * dialog_Message2;
+  static SDL_Rect Message1_rect;
+  static SDL_Rect Message2_rect;
 
   static void SetDialog(std::string image, std::string chr_name, std::string chr_msg);
   static void SetDialog(std::string chr_name, std::string chr_msg);

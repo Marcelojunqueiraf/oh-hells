@@ -79,7 +79,8 @@ void Resources::ClearSounds()
 
 TTF_Font *Resources::GetFont(std::string file, int ptsize)
 {
-  if (Resources::fontTable.find(file) == Resources::fontTable.end())
+  auto specific_file = file + std::to_string(ptsize);
+  if (Resources::fontTable.find(specific_file) == Resources::fontTable.end())
   {
     TTF_Font* font = TTF_OpenFont(file.c_str(), ptsize);
     if (font == nullptr)
@@ -87,9 +88,9 @@ TTF_Font *Resources::GetFont(std::string file, int ptsize)
       std::cerr << SDL_GetError() << std::endl;
       std::terminate();
     }
-    Resources::fontTable.emplace(file, font);
+    Resources::fontTable.emplace(specific_file, font);
   }
-  return Resources::fontTable[file];
+  return Resources::fontTable[specific_file];
 }
 
 void Resources::ClearFonts()
