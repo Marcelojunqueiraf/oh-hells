@@ -1,5 +1,6 @@
 #include "PreguicaState_1.hpp"
 #include "PreguicaState_2.hpp"
+#include "../LuxuriaState/LuxuriaState.hpp"
 #include "../../Camera/Camera.hpp"
 #include "../../Utils/Collision/Collision.cpp"
 #include "../../Componentes/HealthBar/HealthBar.hpp"
@@ -88,6 +89,21 @@ PreguicaState_1::PreguicaState_1() : backgroundMusic(Game::GetInstance()->backgr
                                                 Game::GetInstance()->Push(new PreguicaState_2());
                                             }
                                         }));
+
+    // Teleporte de mapa
+    go = new GameObject();
+    go->box = {37, 60, 150, 215};
+    goPtr = this->AddObject(go);
+    go->AddComponent(new ActionCollider(goPtr, {1, 1}, Vec2(0, 0), this,
+    [](State *state, std::weak_ptr<GameObject> other)
+    {
+        Player *player = (Player *)other.lock()->GetComponent("Player").lock().get();
+        if (player)
+        {
+            player->SetPosition(167, 250);
+            Game::GetInstance()->Push(new LuxuriaState());
+        }
+    }));
 
     // Seta a camera pra ter um limite maximo de visao
     game_view = {0, 0, (float)bg->GetWidth(), (float)bg->GetHeight()};

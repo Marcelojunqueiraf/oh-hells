@@ -32,10 +32,11 @@ void Minion::Update(float dt)
         associated.lock()->RequestDelete();
     }
 
+    if (!player_go.expired())
+    {
+
     if (shootCooldown.Get() > 1.7f)
     {
-        if (!player_go.expired())
-        {
             GameObject *bulletGO = new GameObject();
             bulletGO->box.x = this->associated.lock()->box.GetCenter().x;
             bulletGO->box.y = this->associated.lock()->box.GetCenter().y;
@@ -48,7 +49,6 @@ void Minion::Update(float dt)
             Bullet *bullet = new RegularBullet(bulletPtr, angle, 300, 1, 1000, "Assets/Luxuria_bullet.png", true);
             bulletGO->AddComponent(bullet);
             shootCooldown.Restart();
-        }
     }
 
     Vec2 distance = player_go.lock()->box.GetCenter() - this->associated.lock()->box.GetCenter();
@@ -57,6 +57,7 @@ void Minion::Update(float dt)
         Vec2 velocity = distance.normalize() * WALK_SPEED * dt;
         associated.lock()->box.x += velocity.x;
         associated.lock()->box.y += velocity.y;
+    }
     }
 
     ShowSprite(idle_animation);
