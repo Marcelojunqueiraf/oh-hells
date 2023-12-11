@@ -82,7 +82,7 @@ LuxuriaState::LuxuriaState()
     go->AddComponent(new CameraFollower(goPtr));
 
     // Adicionando mapa
-    bg = new Sprite("Assets/Cenario/MAPA_LUXURIA_COMPLETO.png", this->AddObject(new GameObject()));
+    bg = new Sprite("Assets/Cenario/mapa_luxuria_v2.png", this->AddObject(new GameObject()));
     bg->SetScaleX(3, 3);
     go->AddComponent(bg);
 
@@ -100,6 +100,21 @@ LuxuriaState::LuxuriaState()
 
     Camera::GetInstance().SetView(game_view); // Seta com o tamanho da imagem
     // Camera::GetInstance().Follow(player_goPtr);
+
+
+    // Teleporte para mapa anterior
+    go = new GameObject();
+    go->box = {400, 1200, 310, 115};
+    goPtr = this->AddObject(go);
+    go->AddComponent(new ActionCollider(goPtr, {1, 1}, {0, 0}, this,
+    [](State *state, std::weak_ptr<GameObject> other)
+    {
+        Player *player = (Player *)other.lock()->GetComponent("Player").lock().get();
+        if (player)
+        {
+            state->popRequested = true;
+        }
+    }));
 
     go = new GameObject();
     go->Depth = Top;

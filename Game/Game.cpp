@@ -1,7 +1,7 @@
 #include "Game.hpp"
 
 #include <iostream>
-#define DEBUG
+// #define DEBUG
 
 Game *Game::instance = nullptr;
 Sprite *Game::dialogImage = nullptr;
@@ -15,6 +15,7 @@ SDL_Texture * Game::dialog_Message1;
 SDL_Texture * Game::dialog_Message2;
 SDL_Rect Game::Message1_rect = {395, 380, 0, 0};;
 SDL_Rect Game::Message2_rect = {400, 430, 0, 0};
+Timer Game::dialogTimer;
 
 
 Game::Game(std::string title, int width, int height)
@@ -126,14 +127,21 @@ void Game::Run()
       stateStack.top()->Update(dt);
       stateStack.top()->Render();
 
+      dialogTimer.Update(dt);
+
       if (show_dialog && Game::show_dialog)
       {
+
         Vec2 pos = Camera::GetInstance().pos;
         Game::dialogBackground->Render(pos.x, pos.y);
         Game::dialogImage->Render(pos.x, pos.y);
 
         SDL_RenderCopy(renderer.get(), dialog_Message1, NULL, &Message1_rect);
         SDL_RenderCopy(renderer.get(), dialog_Message2, NULL, &Message2_rect);
+
+        if(dialogTimer.Get() > 5){
+          ShowDialog(false);
+        }
       }
 
       SDL_RenderPresent(renderer.get());
@@ -242,6 +250,8 @@ void Game::SetDialog(std::string chr_name, std::string chr_msg)
     Message1_rect.h = surf->h;
 	  SDL_FreeSurface(surf);
   }
+
+  dialogTimer.Restart();
 }
 
 void Game::ShowDialog(bool show)
