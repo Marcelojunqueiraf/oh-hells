@@ -125,8 +125,7 @@ LuxuriaState::LuxuriaState()
     luxuria_dialog_animation = new Sprite("Assets/luxuria_dialog.png", goPtr);
     luxuria_dialog_animation->SetScaleX((float)GAME_WIDTH / luxuria_dialog_animation->GetWidth(), (float)GAME_HEIGHT / luxuria_dialog_animation->GetHeight());
     go->AddComponent(luxuria_dialog);
-    luxuria_dialog->ShowDialog(luxuria_dialog_animation, "Luxúria", "Ah, o meu convidado especial chegou! Fique à vontade. Quer um drink ou algo do tipo?", 3);
-
+    
     go = new GameObject();
     go->Depth = Dynamic;
     auto luxuria_goPtr = this->AddObject(go);
@@ -188,10 +187,8 @@ void LuxuriaState::Update(float dt)
 
     quitRequested = input_manager.QuitRequested();
 
-    popRequested = input_manager.KeyPress(ESCAPE_KEY);
+    // popRequested = input_manager.KeyPress(ESCAPE_KEY);
 
-    if (popRequested)
-        backgroundMusic.Stop();
 
     UpdateArray(dt);
 
@@ -204,6 +201,10 @@ void LuxuriaState::Update(float dt)
     // if(input_manager.KeyPress(SDLK_0)){
     // }
     VerifyCollision();
+
+    if (popRequested){
+        backgroundMusic.Stop();
+    }
 }
 
 void LuxuriaState::Render()
@@ -233,6 +234,7 @@ void LuxuriaState::Start()
 {
     StartArray();
     LoadAssets();
+    luxuria_dialog->ShowDialog(luxuria_dialog_animation, "Luxúria", "Ah, o meu convidado especial chegou! Fique à vontade. Quer um drink ou algo do tipo?", 2.5);
     backgroundMusic.Play();
     Camera::GetInstance().SetView(game_view);
     Camera::GetInstance().Follow(player_goPtr);
@@ -240,13 +242,13 @@ void LuxuriaState::Start()
 
 void LuxuriaState::Pause()
 {
-    backgroundMusic.Stop();
+    backgroundMusic.Pause();
     Camera::GetInstance().Unfollow();
 }
 
 void LuxuriaState::Resume()
 {
-    backgroundMusic.Play();
+    backgroundMusic.Resume();
     Camera::GetInstance().SetView(game_view); // Seta com o tamanho da imagem
     Camera::GetInstance().Follow(player_goPtr);
 }

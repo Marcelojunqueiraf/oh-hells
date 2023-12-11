@@ -13,6 +13,7 @@ Dialog::Dialog(std::weak_ptr<GameObject> associated)
     
     character_name = new Text("Assets/Ubuntu-Regular.ttf", associated, 28, Text::BLENDED, "Chr name", {255, 255, 255, 255});
     character_message = new Text("Assets/Ubuntu-Regular.ttf", associated, 28, Text::BLENDED, "Chr message", {255, 255, 255, 255}, 500);
+    dialogSound = new Sound("Assets/fala_boss.ogg", associated);
     character_name->show = false;
     character_message->show = false;
 }
@@ -29,6 +30,7 @@ void Dialog::Hide(){
 }
 
 void Dialog::ShowDialog(Sprite * emotion, std::string chr_name, std::string chr_msg, float timeout){
+    dialogSound->Play();
     background->show = true;
     dialog_timeout1 = timeout;
 
@@ -57,6 +59,7 @@ void Dialog::Update(float dt){
     if(dialog_showing1 && dialog_timer1.Get() > dialog_timeout1){
         dialog_showing1 = false;
         background->show = false;
+        dialogSound->Stop();
     }
 }
 

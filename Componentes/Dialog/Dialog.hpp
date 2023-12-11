@@ -36,6 +36,7 @@ private:
     Sprite *last_character_animation = nullptr;
     Text * character_name;
     Text * character_message;
+    Sound * dialogSound;
 
     bool dialog_showing1 = false;
     float dialog_timeout1;

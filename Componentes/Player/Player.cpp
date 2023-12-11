@@ -144,7 +144,7 @@ void Player::Update(float dt)
             shootCooldown.Restart();
         }
 
-        if (input.IsKeyDown(SDLK_SPACE) && dashTimer.Get() > 1.0f)
+        if (input.IsKeyDown(SDLK_SPACE) && dashTimer.Get() > ATTACK_SPEED)
         {
 
             state = DASHING;
@@ -153,25 +153,28 @@ void Player::Update(float dt)
             {
                 dash_direction.y = -1;
                 ShowSprite(back_attack_animation);
+                sword_attack_sound->Play();
             }
             else if (down)
             {
                 dash_direction.y = 1;
                 ShowSprite(front_attack_animation);
+                sword_attack_sound->Play();
             }
 
             if (left)
             {
                 dash_direction.x = -1;
                 ShowSprite(left_attack_animation);
+                sword_attack_sound->Play();
             }
             else if (right)
             {
                 dash_direction.x = 1;
                 ShowSprite(right_attack_animation);
+                sword_attack_sound->Play();
             }
             dash_direction = dash_direction.normalize() * DASH_SPEED;
-            sword_attack_sound->Play();
             dashTimer.Restart();
         }
         else if ((up || down || left || right) && attackCooldown.Get() > ATTACK_SPEED)
@@ -217,8 +220,9 @@ void Player::Update(float dt)
     case (DASHING):
         if (dashTimer.Get() < 0.3f)
             associated.lock()->box += dash_direction * dt;
-        else
+        else 
         {
+            last_animation->SetFrame(0);
             state = RESTING;
         }
         break;
@@ -228,13 +232,20 @@ void Player::Update(float dt)
             state = RESTING;
         break;
     case (DEAD):
-        if (hitTimer.Get() > 0.79f)
+        if(hitTimer.Get() > 1.5f){
             associated.lock()->RequestDelete();
+            Game::GetInstance()->GetCurrentState().popRequested = true;
+        }
+        else if (hitTimer.Get() > 0.79f){
+            death_animation->show = false;
+        }
         break;
 
     default: // State Default = RESTING
         state = RESTING;
-        ShowSprite(stand_straight);
+        // if(!stand_straight->show)
+        if(dashTimer.Get() > 0.68f)
+            ShowSprite(stand_straight);
         break;
     }
 

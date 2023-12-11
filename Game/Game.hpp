@@ -8,6 +8,7 @@
 #include "../Music/Music.hpp"
 #include "../Utils/InputManager/InputManager.hpp"
 #include "../Componentes/Sprite/Sprite.hpp"
+#include "../Componentes/Sound/Sound.hpp"
 #include "../Utils/Timer/Timer.hpp"
 #include <memory>
 #include <stack>
@@ -18,6 +19,7 @@
 
 class State;
 class Sprite;
+class Sound;
 
 class Game
 {
@@ -47,6 +49,7 @@ public:
   static SDL_Rect Message1_rect;
   static SDL_Rect Message2_rect;
   static Timer dialogTimer;
+  static Sound * dialogSound;
 
   static void SetDialog(std::string image, std::string chr_name, std::string chr_msg);
   static void SetDialog(std::string chr_name, std::string chr_msg);
