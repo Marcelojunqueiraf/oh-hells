@@ -19,13 +19,19 @@ Luxuria::Luxuria(std::weak_ptr<GameObject> associated, int hp, std::weak_ptr<Gam
     hit_animation->SetScaleX(3, 3);
     idle_animation = new Sprite("Assets/Luxuria_idle.png", associated, 5, 0.1);
     idle_animation->SetScaleX(3, 3);
+    shooting_animation = new Sprite("Assets/Luxuria_front_attack.png", associated, 6, 0.1);
+    shooting_animation->SetScaleX(3, 3);
     
     associated.lock()->AddComponent(hit_animation);
     associated.lock()->AddComponent(idle_animation);
+    associated.lock()->AddComponent(shooting_animation);
     // associated.lock()->AddComponent(new HealthBar("Assets/barra_inimiga.png", associated, hp));
 
+    shooting_animation->show = false;
     hit_animation->show = false;
     last_animation = idle_animation;
+
+    music_playing = true;
 
     shootCooldown = Timer();
     hitTimer = Timer();
@@ -55,26 +61,49 @@ void Luxuria::Update(float dt)
 
     InputManager &input = InputManager::GetInstance();
 
-    if (shootCooldown.Get() > 1.5f)
+
+    switch (state)
     {
-        if(!player_go.expired()){
-            GameObject *bulletGO = new GameObject();
-            bulletGO->box.x = this->associated.lock()->box.GetCenter().x;
-            bulletGO->box.y = this->associated.lock()->box.GetCenter().y;
-            std::weak_ptr<GameObject> bulletPtr = Game::GetInstance()->GetCurrentState().AddObject(bulletGO);
+    case (RESTING):
+        if (shootCooldown.Get() > 1.5f)
+        {
+            if(!player_go.expired()){
+                state = SHOOTING;
+                ShowSprite(shooting_animation);
+                GameObject *bulletGO = new GameObject();
+                bulletGO->box.x = this->associated.lock()->box.GetCenter().x;
+                bulletGO->box.y = this->associated.lock()->box.GetCenter().y;
+                std::weak_ptr<GameObject> bulletPtr = Game::GetInstance()->GetCurrentState().AddObject(bulletGO);
 
-            // get mouse direction
-            Vec2 player_pos = player_go.lock()->box.GetCenter();
-            Vec2 distance = player_pos - this->associated.lock()->box.GetCenter();
+                // get mouse direction
+                Vec2 player_pos = player_go.lock()->box.GetCenter();
+                Vec2 distance = player_pos - this->associated.lock()->box.GetCenter();
 
-            float angle = distance.getAngle();
-            Bullet *bullet = new RegularBullet(bulletPtr, angle, 500, 10, 1000, "Assets/Luxuria_bullet.png", true);
-            bulletGO->AddComponent(bullet);
-            shootCooldown.Restart();
+                float angle = distance.getAngle();
+                bulletGO->angle = angle;
+                
+                Bullet *bullet = new GuidedBullet(bulletPtr, player_go, 100, 10, 1000, "Assets/Luxuria_bullet.png", true);
+                // Bullet *bullet = new RegularBullet(bulletPtr, angle, 500, 10, 1000, "Assets/Luxuria_bullet.png", true);
+                bulletGO->AddComponent(bullet);
+                shootCooldown.Restart();
+            }else if(music_playing){
+                Game::GetInstance()->backgroundMusic.Stop();
+                music_playing = false;
+            }
         }
+        break;
+    case (SHOOTING):
+        if (shootCooldown.Get() > 0.59f)
+        {
+            state = RESTING;
+            shootCooldown.Restart();
+            ShowSprite(idle_animation);
+        }
+        break;
+    default:
+        ShowSprite(idle_animation);
+        break;
     }
-
-    ShowSprite(idle_animation);
 }
 
 bool Luxuria::Is(std::string type)

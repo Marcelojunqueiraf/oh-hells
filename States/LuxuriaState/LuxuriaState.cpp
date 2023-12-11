@@ -3,6 +3,7 @@
 #include "../../Camera/Camera.hpp"
 #include "../../Utils/Collision/Collision.cpp"
 #include "../../Componentes/HealthBar/HealthBar.hpp"
+#include "../../Componentes/MovingObject/MovingObject.hpp"
 #include "../../Componentes/ActionCollider/ActionCollider.hpp"
 #include "../../Componentes/CameraFollower/CameraFollower.hpp"
 #include "../../GameObject/GameObject.hpp"
@@ -81,8 +82,8 @@ LuxuriaState::LuxuriaState()
     go->AddComponent(new CameraFollower(goPtr));
 
     // Adicionando mapa
-    bg = new Sprite("Assets/Cenario/mapa_portal_preguica.png", this->AddObject(new GameObject()));
-    bg->SetScaleX(4, 4);
+    bg = new Sprite("Assets/Cenario/MAPA_LUXURIA_COMPLETO.png", this->AddObject(new GameObject()));
+    bg->SetScaleX(3, 3);
     go->AddComponent(bg);
 
     game_view = {0, 0, (float)bg->GetWidth(), (float)bg->GetHeight()};
@@ -91,7 +92,7 @@ LuxuriaState::LuxuriaState()
     go->Depth = Dynamic;
     player_goPtr = this->AddObject(go);
     player = new Player(player_goPtr);
-    player->SetPosition(512, 300);
+    player->SetPosition(496, 1026);
     go->AddComponent(player);
     go->AddComponent(new HealthBar(player_goPtr, player->GetHp(), player->GetHp()));
     go->AddComponent(new Collider(player_goPtr, {0.3, 0.3}, Vec2(64, 72)));
@@ -109,7 +110,7 @@ LuxuriaState::LuxuriaState()
     luxuria_dialog_animation = new Sprite("Assets/luxuria_dialog.png", goPtr);
     luxuria_dialog_animation->SetScaleX((float)GAME_WIDTH / luxuria_dialog_animation->GetWidth(), (float)GAME_HEIGHT / luxuria_dialog_animation->GetHeight());
     go->AddComponent(luxuria_dialog);
-    luxuria_dialog->ShowDialog(luxuria_dialog_animation, "Luxúria", "Ah, o meu convidado especial chegou! Fique à vontade. Quer um drink ou algo do tipo?");
+    luxuria_dialog->ShowDialog(luxuria_dialog_animation, "Luxúria", "Ah, o meu convidado especial chegou! Fique à vontade. Quer um drink ou algo do tipo?", 3);
 
     go = new GameObject();
     go->Depth = Dynamic;
@@ -118,23 +119,39 @@ LuxuriaState::LuxuriaState()
     go->AddComponent(luxuria);
     go->AddComponent(new HealthBar(luxuria_goPtr, luxuria->GetHp(), luxuria->GetHp()));
     go->AddComponent(new Collider(luxuria_goPtr, {0.3, 0.3}, Vec2(64, 72)));
-    go->box.x = 300;
-    go->box.y = 500;
+    go->box.x = 504;
+    go->box.y = 91;
 
     // go = new GameObject();
-    // go->Depth = Dynamic;
-    // go->AddComponent(new MovingObject("Assets/Cenario/portal.png",this->AddObject(go)));
-    // go->box.x = 800;
-    // go->box.y = 800;
-    // Camera::GetInstance().Follow(go);
+    // go->Depth = Top;
+    // goPtr = this->AddObject(go);
+    // go->AddComponent(new MovingObject("Assets/Cenario/caixa_de_som.png",goPtr));
+    // go->box.x = 80;
+    // go->box.y = 80;
+    // Camera::GetInstance().Follow(goPtr);
+
+    go = new GameObject();
+    Sprite *tree = new Sprite("Assets/Cenario/pista_de_danca.png", this->AddObject(go), 4, 0.5);
+    tree->SetScaleX(3,3);
+    go->AddComponent(tree);
+    go->box.x = 359;
+    go->box.y = 305;
 
     go = new GameObject();
     go->Depth = Dynamic;
-    Sprite *tree = new Sprite("Assets/Cenario/portal.png", this->AddObject(go));
-    tree->SetScaleX(4, 4);
+    tree = new Sprite("Assets/Cenario/caixa_de_som.png", this->AddObject(go));
+    tree->SetScaleX(3,3);
     go->AddComponent(tree);
-    go->box.x = 4;
-    go->box.y = 56;
+    go->box.x = 125;
+    go->box.y = 206;
+
+    go = new GameObject();
+    go->Depth = Dynamic;
+    tree = new Sprite("Assets/Cenario/caixa_de_som.png", this->AddObject(go));
+    tree->SetScaleX(3,3);
+    go->AddComponent(tree);
+    go->box.x = 962;
+    go->box.y = 206;
 }
 
 LuxuriaState::~LuxuriaState()
@@ -178,18 +195,18 @@ void LuxuriaState::Render()
 {
 
     std::stable_sort(objectArray.begin() + 2, objectArray.end(), [](const std::shared_ptr<GameObject> A, const std::shared_ptr<GameObject> B)
-                     {
-                         if (A->Depth < B->Depth)
-                             return true;
-                         if (A->Depth > B->Depth)
-                             return false;
-                         if (A->Depth == Dynamic && B->Depth == Dynamic)
-                         {
-                             return A->box.y + A->box.h < B->box.y + B->box.h;
-                         }
-                         return false;
-                         // return A->GetLayer() < B->GetLayer();
-                     });
+    {
+        if (A->Depth < B->Depth)
+            return true;
+        if (A->Depth > B->Depth)
+            return false;
+        if (A->Depth == Dynamic && B->Depth == Dynamic)
+        {
+            return A->box.y + A->box.h < B->box.y + B->box.h;
+        }
+        return false;
+        // return A->GetLayer() < B->GetLayer();
+    });
 
     for (auto &it : objectArray)
     {

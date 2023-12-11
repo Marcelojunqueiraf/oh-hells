@@ -37,7 +37,7 @@ Player::Player(std::weak_ptr<GameObject> associated) : Component(associated),
     death_animation->SetScaleX(3, 3);
 
     hit_sound = new Sound("Assets/dano.ogg", associated);
-    hit_sound->Volume(16);
+    // hit_sound->Volume(16);
     sword_attack_sound = new Sound("Assets/espada.ogg", associated);
 
     walk_left->show = false;
@@ -269,7 +269,7 @@ Vec2 Player::Position()
 void Player::NotifyCollision(std::weak_ptr<GameObject> other)
 {
     Bullet *bullet = (Bullet *)other.lock()->GetComponent("Bullet").lock().get();
-    if (bullet != nullptr && bullet->targetPlayer)
+    if (bullet != nullptr && bullet->targetPlayer && state != DEAD)
     {
         hp -= bullet->GetDamage();
         hitTimer.Restart();

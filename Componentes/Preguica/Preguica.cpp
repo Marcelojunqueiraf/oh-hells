@@ -52,7 +52,7 @@ void Preguica::Update(float dt)
         }
         else if (dialogTimer.Get() > 3 && dialogTimer.Get() < 3.2f)
         {
-            Game::SetDialog("Preguica", "Tem como esperar? estou tirando um cochilo");
+            Game::SetDialog("Assets/preguica_dialog.png", "Preguica", "Tem como esperar? estou tirando um cochilo");
         }
 
         if (!player_go.expired())
@@ -65,7 +65,7 @@ void Preguica::Update(float dt)
             hp = 5000;
             fase = CIRCULO;
             dialogTimer.Restart();
-            Game::SetDialog("Preguica", "Que deselegante, me acordou!");
+            Game::SetDialog("Assets/preguica_dialog.png", "Preguica", "Que deselegante, me acordou!");
             Game::ShowDialog(true);
         }
         break;
@@ -87,7 +87,7 @@ void Preguica::Update(float dt)
             associated.lock()->box.y = 100;
 
             dialogTimer.Restart();
-            Game::SetDialog("Preguica", "Minions, acabem com ele!");
+            Game::SetDialog("Assets/preguica_dialog.png", "Preguica", "Minions, acabem com ele!");
             Game::ShowDialog(true);
 
             break;
@@ -141,7 +141,7 @@ void Preguica::Update(float dt)
             fase = TIRO;
 
             dialogTimer.Restart();
-            Game::SetDialog("Preguica", "Se quer algo bem feito, faca voce mesmo!");
+            Game::SetDialog("Assets/preguica_dialog.png", "Preguica", "Se quer algo bem feito, faca voce mesmo!");
             Game::ShowDialog(true);
 
             break;
@@ -198,7 +198,7 @@ void Preguica::Update(float dt)
             fase = MORRENDO;
             hp = 5000;
             dialogTimer.Restart();
-            Game::SetDialog("Preguica", "Nunca vou te perdoaaaaar...");
+            Game::SetDialog("Assets/preguica_dialog.png", "Preguica", "Nunca vou te perdoaaaaar...");
             Game::ShowDialog(true);
         }
 

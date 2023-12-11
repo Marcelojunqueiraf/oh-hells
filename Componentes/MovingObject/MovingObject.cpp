@@ -1,8 +1,10 @@
 #include "MovingObject.hpp"
 
+#define PROPORSION 3
+
 MovingObject::MovingObject(std::string file, std::weak_ptr<GameObject> associated): Component(associated){
     Sprite * tree = new Sprite(file, associated);
-    tree->SetScaleX(4,4);
+    tree->SetScaleX(PROPORSION,PROPORSION);
     associated.lock()->AddComponent(tree);
 }
 
@@ -25,10 +27,10 @@ void MovingObject::Update(float dt){
     bool left = input.IsKeyDown(SDLK_a);
     bool right = input.IsKeyDown(SDLK_d);
 
-    int walk = 4;
+    int walk = PROPORSION;
 
     if(input.IsKeyDown(SDLK_LSHIFT)){
-        walk = 12;   
+        walk = 3*PROPORSION;   
     }
 
     if (up)

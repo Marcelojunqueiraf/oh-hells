@@ -80,15 +80,16 @@ PreguicaState_1::PreguicaState_1() : backgroundMusic(Game::GetInstance()->backgr
     go->box = {1780, 880, 10, 800};
     goPtr = this->AddObject(go);
     go->AddComponent(new ActionCollider(goPtr, {1, 1}, Vec2(0, 0), this,
-                                        [](State *state, std::weak_ptr<GameObject> other)
-                                        {
-                                            Player *player = (Player *)other.lock()->GetComponent("Player").lock().get();
-                                            if (player)
-                                            {
-                                                player->SetPosition(1647, 1270);
-                                                Game::GetInstance()->Push(new PreguicaState_2());
-                                            }
-                                        }));
+        [](State *state, std::weak_ptr<GameObject> other)
+        {
+            Player *player = (Player *)other.lock()->GetComponent("Player").lock().get();
+            if (player)
+            {
+                player->SetPosition(1647, 1270);
+                Game::GetInstance()->Push(new PreguicaState_2());
+            }
+        }
+    ));
 
     // Teleporte de mapa
     go = new GameObject();
@@ -112,7 +113,7 @@ PreguicaState_1::PreguicaState_1() : backgroundMusic(Game::GetInstance()->backgr
     go->Depth = Dynamic;
     player_goPtr = this->AddObject(go);
     player = new Player(player_goPtr);
-    player->SetPosition(512, 300);
+    player->SetPosition(332, 433);
     go->AddComponent(player);
     go->AddComponent(new HealthBar(player_goPtr, player->GetHp(), player->GetHp()));
     go->AddComponent(new Collider(player_goPtr, {0.3, 0.3}, Vec2(64, 72)));

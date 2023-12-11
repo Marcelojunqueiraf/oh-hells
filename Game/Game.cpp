@@ -158,6 +158,10 @@ Game::~Game()
   }
 
   if(Game::dialog_Message1)
+      SDL_DestroyTexture(dialog_Message1);
+
+  if(Game::dialog_Message2)
+      SDL_DestroyTexture(dialog_Message2);
 
   Mix_CloseAudio();
   Mix_Quit();

@@ -29,14 +29,15 @@ public:
     void Render();
     bool Is(std::string type);
     void Hide();
-    void ShowDialog(Sprite * emotion, std::string chr_name, std::string chr_msg);
+    void ShowDialog(Sprite * emotion, std::string chr_name, std::string chr_msg, float timeout=5);
 
 private:
     Sprite * background;
     Sprite *last_character_animation = nullptr;
     Text * character_name;
     Text * character_message;
-    Timer keyCooldown;
 
-    bool key_pressed;
+    bool dialog_showing1 = false;
+    float dialog_timeout1;
+    Timer dialog_timer1;
 };
