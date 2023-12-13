@@ -7,13 +7,10 @@
 
 static Sprite *last_animation = nullptr;
 
-
 #define SCALE 3
-#define IMG_SIZE SCALE*64
+#define IMG_SIZE SCALE * 64
 
-
-Luxuria::Luxuria(std::weak_ptr<GameObject> associated, int hp, std::weak_ptr<GameObject> player_go) :
- Component(associated), hp(100), player_go(player_go)
+Luxuria::Luxuria(std::weak_ptr<GameObject> associated, int hp, std::weak_ptr<GameObject> player_go) : Component(associated), hp(5000), player_go(player_go)
 {
     hit_animation = new Sprite("Assets/Luxuria_front_hit.png", associated, 6, 0.1);
     hit_animation->SetScaleX(3, 3);
@@ -21,7 +18,7 @@ Luxuria::Luxuria(std::weak_ptr<GameObject> associated, int hp, std::weak_ptr<Gam
     idle_animation->SetScaleX(3, 3);
     shooting_animation = new Sprite("Assets/Luxuria_front_attack.png", associated, 6, 0.1);
     shooting_animation->SetScaleX(3, 3);
-    
+
     associated.lock()->AddComponent(hit_animation);
     associated.lock()->AddComponent(idle_animation);
     associated.lock()->AddComponent(shooting_animation);
@@ -33,8 +30,8 @@ Luxuria::Luxuria(std::weak_ptr<GameObject> associated, int hp, std::weak_ptr<Gam
 
     music_playing = true;
 
-    shootCooldown = Timer();
-    hitTimer = Timer();
+    Game::SetDialog("Assets/luxuria_dialog.png", "Luxúria", "Ah, o meu convidado especial chegou! Fique à vontade. Quer um drink ou algo do tipo?");
+    Game::ShowDialog(true);
 }
 
 Luxuria::~Luxuria()
@@ -46,6 +43,34 @@ void Luxuria::Update(float dt)
 
     hitTimer.Update(dt);
     shootCooldown.Update(dt);
+    falasTimer.Update(dt);
+
+    if (falasTimer.Get() > 3)
+    {
+        Game::ShowDialog(false);
+    }
+
+    if (falasTimer.Get() > 15)
+    {
+        Game::SetDialog("Luxúria", "Não vou perder para voce. Afinal, não posso aceitar que a escala 6x1 de trabalho volte");
+        Game::ShowDialog(true);
+    }
+
+    if (falasTimer.Get() > 18)
+    {
+        Game::ShowDialog(false);
+    }
+
+    if (falasTimer.Get() > 30)
+    {
+        Game::SetDialog("Luxúria", "Sinto muito querido. Se quiser seu amuleto vai ter que pegar a força. Muita forca >:)");
+        Game::ShowDialog(true);
+    }
+
+    if (falasTimer.Get() > 33)
+    {
+        Game::ShowDialog(false);
+    }
 
     if (hitTimer.Get() < 0.4f)
     {
@@ -58,16 +83,15 @@ void Luxuria::Update(float dt)
         return;
     }
 
-
     InputManager &input = InputManager::GetInstance();
-
 
     switch (state)
     {
     case (RESTING):
         if (shootCooldown.Get() > 1.5f)
         {
-            if(!player_go.expired()){
+            if (!player_go.expired())
+            {
                 state = SHOOTING;
                 ShowSprite(shooting_animation);
                 GameObject *bulletGO = new GameObject();
@@ -81,12 +105,14 @@ void Luxuria::Update(float dt)
 
                 float angle = distance.getAngle();
                 bulletGO->angle = angle;
-                
+
                 Bullet *bullet = new GuidedBullet(bulletPtr, player_go, 100, 10, 1000, "Assets/Luxuria_bullet.png", true);
                 // Bullet *bullet = new RegularBullet(bulletPtr, angle, 500, 10, 1000, "Assets/Luxuria_bullet.png", true);
                 bulletGO->AddComponent(bullet);
                 shootCooldown.Restart();
-            }else if(music_playing){
+            }
+            else if (music_playing)
+            {
                 Game::GetInstance()->backgroundMusic.Stop();
                 music_playing = false;
             }
@@ -122,16 +148,13 @@ void Luxuria::NotifyCollision(std::weak_ptr<GameObject> other)
     }
 }
 
-int& Luxuria::GetHp()
+int &Luxuria::GetHp()
 {
     return hp;
 }
 
 void Luxuria::TakeDamage(int damage)
 {
-    if (hitTimer.Get() < 0.4f)
-        return;
-    std::cout << "Luxuria took " << damage << " damage" << std::endl;
     hp -= damage;
 }
 

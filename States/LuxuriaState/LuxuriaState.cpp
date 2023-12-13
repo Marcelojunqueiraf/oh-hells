@@ -101,31 +101,30 @@ LuxuriaState::LuxuriaState()
     Camera::GetInstance().SetView(game_view); // Seta com o tamanho da imagem
     // Camera::GetInstance().Follow(player_goPtr);
 
-
     // Teleporte para mapa anterior
     go = new GameObject();
     go->box = {400, 1200, 310, 115};
     goPtr = this->AddObject(go);
     go->AddComponent(new ActionCollider(goPtr, {1, 1}, {0, 0}, this,
-    [](State *state, std::weak_ptr<GameObject> other)
-    {
-        Player *player = (Player *)other.lock()->GetComponent("Player").lock().get();
-        if (player)
-        {
-            state->popRequested = true;
-        }
-    }));
+                                        [](State *state, std::weak_ptr<GameObject> other)
+                                        {
+                                            Player *player = (Player *)other.lock()->GetComponent("Player").lock().get();
+                                            if (player)
+                                            {
+                                                state->popRequested = true;
+                                            }
+                                        }));
 
-    go = new GameObject();
-    go->Depth = Top;
-    go->box.x = 0;
-    go->box.y = 0;
-    goPtr = this->AddObject(go);
-    luxuria_dialog = new Dialog(goPtr);
-    luxuria_dialog_animation = new Sprite("Assets/luxuria_dialog.png", goPtr);
-    luxuria_dialog_animation->SetScaleX((float)GAME_WIDTH / luxuria_dialog_animation->GetWidth(), (float)GAME_HEIGHT / luxuria_dialog_animation->GetHeight());
-    go->AddComponent(luxuria_dialog);
-    
+    // go = new GameObject();
+    // go->Depth = Top;
+    // go->box.x = 0;
+    // go->box.y = 0;
+    // goPtr = this->AddObject(go);
+    // luxuria_dialog = new Dialog(goPtr);
+    // luxuria_dialog_animation = new Sprite("Assets/luxuria_dialog.png", goPtr);
+    // luxuria_dialog_animation->SetScaleX((float)GAME_WIDTH / luxuria_dialog_animation->GetWidth(), (float)GAME_HEIGHT / luxuria_dialog_animation->GetHeight());
+    // go->AddComponent(luxuria_dialog);
+
     go = new GameObject();
     go->Depth = Dynamic;
     auto luxuria_goPtr = this->AddObject(go);
@@ -146,7 +145,7 @@ LuxuriaState::LuxuriaState()
 
     go = new GameObject();
     Sprite *tree = new Sprite("Assets/Cenario/pista_de_danca.png", this->AddObject(go), 4, 0.5);
-    tree->SetScaleX(3,3);
+    tree->SetScaleX(3, 3);
     go->AddComponent(tree);
     go->box.x = 359;
     go->box.y = 305;
@@ -154,7 +153,7 @@ LuxuriaState::LuxuriaState()
     go = new GameObject();
     go->Depth = Dynamic;
     tree = new Sprite("Assets/Cenario/caixa_de_som.png", this->AddObject(go));
-    tree->SetScaleX(3,3);
+    tree->SetScaleX(3, 3);
     go->AddComponent(tree);
     go->box.x = 125;
     go->box.y = 206;
@@ -162,7 +161,7 @@ LuxuriaState::LuxuriaState()
     go = new GameObject();
     go->Depth = Dynamic;
     tree = new Sprite("Assets/Cenario/caixa_de_som.png", this->AddObject(go));
-    tree->SetScaleX(3,3);
+    tree->SetScaleX(3, 3);
     go->AddComponent(tree);
     go->box.x = 962;
     go->box.y = 206;
@@ -189,7 +188,6 @@ void LuxuriaState::Update(float dt)
 
     // popRequested = input_manager.KeyPress(ESCAPE_KEY);
 
-
     UpdateArray(dt);
 
     /* Verifica aqui se o jogo acabou */
@@ -202,7 +200,8 @@ void LuxuriaState::Update(float dt)
     // }
     VerifyCollision();
 
-    if (popRequested){
+    if (popRequested)
+    {
         backgroundMusic.Stop();
     }
 }
@@ -211,18 +210,18 @@ void LuxuriaState::Render()
 {
 
     std::stable_sort(objectArray.begin() + 2, objectArray.end(), [](const std::shared_ptr<GameObject> A, const std::shared_ptr<GameObject> B)
-    {
-        if (A->Depth < B->Depth)
-            return true;
-        if (A->Depth > B->Depth)
-            return false;
-        if (A->Depth == Dynamic && B->Depth == Dynamic)
-        {
-            return A->box.y + A->box.h < B->box.y + B->box.h;
-        }
-        return false;
-        // return A->GetLayer() < B->GetLayer();
-    });
+                     {
+                         if (A->Depth < B->Depth)
+                             return true;
+                         if (A->Depth > B->Depth)
+                             return false;
+                         if (A->Depth == Dynamic && B->Depth == Dynamic)
+                         {
+                             return A->box.y + A->box.h < B->box.y + B->box.h;
+                         }
+                         return false;
+                         // return A->GetLayer() < B->GetLayer();
+                     });
 
     for (auto &it : objectArray)
     {
@@ -234,7 +233,7 @@ void LuxuriaState::Start()
 {
     StartArray();
     LoadAssets();
-    luxuria_dialog->ShowDialog(luxuria_dialog_animation, "Luxúria", "Ah, o meu convidado especial chegou! Fique à vontade. Quer um drink ou algo do tipo?", 2.5);
+
     backgroundMusic.Play();
     Camera::GetInstance().SetView(game_view);
     Camera::GetInstance().Follow(player_goPtr);

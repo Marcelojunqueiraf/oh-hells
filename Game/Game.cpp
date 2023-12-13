@@ -11,13 +11,13 @@ std::string Game::character_msg = "";
 bool Game::show_dialog = false;
 
 TTF_Font *Game::Sans;
-SDL_Texture * Game::dialog_Message1;
-SDL_Texture * Game::dialog_Message2;
-SDL_Rect Game::Message1_rect = {395, 380, 0, 0};;
+SDL_Texture *Game::dialog_Message1;
+SDL_Texture *Game::dialog_Message2;
+SDL_Rect Game::Message1_rect = {395, 380, 0, 0};
+;
 SDL_Rect Game::Message2_rect = {400, 430, 0, 0};
 Timer Game::dialogTimer;
-Sound * Game::dialogSound;
-
+Sound *Game::dialogSound;
 
 Game::Game(std::string title, int width, int height)
 {
@@ -52,7 +52,7 @@ Game::Game(std::string title, int width, int height)
     std::terminate();
   }
 
-	Mix_AllocateChannels(32);
+  Mix_AllocateChannels(32);
 
   if (TTF_Init() != 0)
   {
@@ -94,10 +94,10 @@ void Game::Run()
   // Game::ShowDialog(true);
   Game::dialogBackground = new Sprite("Assets/Menu_dialogo.png", std::weak_ptr<GameObject>());
   Game::dialogBackground->SetScaleX((float)GAME_WIDTH / Game::dialogBackground->GetWidth(), (float)GAME_HEIGHT / Game::dialogBackground->GetHeight());
-  
-  Game::dialogSound = new Sound("Assets/fala_boss.ogg",  std::weak_ptr<GameObject>());
-  Game::dialogSound->Volume(16);
-  
+
+  Game::dialogSound = new Sound("Assets/fala_boss.ogg", std::weak_ptr<GameObject>());
+  // Game::dialogSound->Volume(16);
+
   Sans = Resources::GetFont("Assets/Ubuntu-Regular.ttf", 28);
 
   if (storedState != nullptr)
@@ -146,7 +146,8 @@ void Game::Run()
         SDL_RenderCopy(renderer.get(), dialog_Message1, NULL, &Message1_rect);
         SDL_RenderCopy(renderer.get(), dialog_Message2, NULL, &Message2_rect);
 
-        if(dialogTimer.Get() > 5){
+        if (dialogTimer.Get() > 5)
+        {
           ShowDialog(false);
         }
       }
@@ -171,15 +172,15 @@ Game::~Game()
   {
     delete storedState;
   }
-  
+
   free(dialogBackground);
   free(dialogSound);
 
-  if(Game::dialog_Message1)
-      SDL_DestroyTexture(dialog_Message1);
+  if (Game::dialog_Message1)
+    SDL_DestroyTexture(dialog_Message1);
 
-  if(Game::dialog_Message2)
-      SDL_DestroyTexture(dialog_Message2);
+  if (Game::dialog_Message2)
+    SDL_DestroyTexture(dialog_Message2);
 
   Mix_CloseAudio();
   Mix_Quit();
@@ -239,36 +240,38 @@ void Game::SetDialog(std::string chr_name, std::string chr_msg)
   SDL_Surface *surf = TTF_RenderUTF8_Blended_Wrapped(Sans, chr_msg.c_str(), White, 500);
 
   if (dialog_Message2)
-      SDL_DestroyTexture(dialog_Message2);
-    
-	dialog_Message2 = SDL_CreateTextureFromSurface(Game::GetInstance()->GetRenderer().lock().get(), surf);
+    SDL_DestroyTexture(dialog_Message2);
+
+  dialog_Message2 = SDL_CreateTextureFromSurface(Game::GetInstance()->GetRenderer().lock().get(), surf);
   Game::character_msg = chr_msg;
   Message2_rect.w = surf->w;
   Message2_rect.h = surf->h;
   SDL_FreeSurface(surf);
 
-  if(chr_msg != Game::character_name){
+  if (chr_msg != Game::character_name)
+  {
     surf = TTF_RenderUTF8_Solid(Sans, chr_name.c_str(), White);
 
     if (dialog_Message1)
       SDL_DestroyTexture(dialog_Message1);
-    
+
     dialog_Message1 = SDL_CreateTextureFromSurface(Game::GetInstance()->GetRenderer().lock().get(), surf);
     Game::character_name = chr_name;
 
     Message1_rect.w = surf->w;
     Message1_rect.h = surf->h;
-	  SDL_FreeSurface(surf);
+    SDL_FreeSurface(surf);
   }
 
-  dialogSound->Play();
   dialogTimer.Restart();
 }
 
 void Game::ShowDialog(bool show)
 {
-  if(!show){
+  if (show)
+    dialogSound->Play();
+  else
     dialogSound->Stop();
-  }
+
   Game::show_dialog = show;
 }

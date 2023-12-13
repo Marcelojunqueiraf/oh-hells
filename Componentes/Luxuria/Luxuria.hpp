@@ -11,7 +11,6 @@
 #include "../GuidedBullet/GuidedBullet.hpp"
 #include "../../Utils/Timer/Timer.hpp"
 
-
 #include <memory>
 
 class Sprite;
@@ -29,14 +28,14 @@ public:
         DEAD
     };
     LuxuriaState state = RESTING;
-    Sprite * health_bar;
+    Sprite *health_bar;
     Luxuria(std::weak_ptr<GameObject> associated, int hp, std::weak_ptr<GameObject> player_go);
     ~Luxuria();
     void Update(float dt);
     bool Is(std::string type);
     void NotifyCollision(std::weak_ptr<GameObject> other);
     void ShowSprite(Sprite *spr);
-    int& GetHp();
+    int &GetHp();
     void TakeDamage(int damage);
 
 private:
@@ -47,5 +46,5 @@ private:
     Sprite *idle_animation, *hit_animation, *shooting_animation;
     Timer shootCooldown;
     Timer hitTimer;
-
+    Timer falasTimer;
 };

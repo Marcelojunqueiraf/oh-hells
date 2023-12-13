@@ -30,7 +30,7 @@ Preguica::Preguica(std::weak_ptr<GameObject> associated, int hp, std::weak_ptr<G
     hitTimer = Timer();
     dialogTimer = Timer();
 
-    Game::SetDialog("Assets/preguica_dialog.png", "Preguica", "Oh, tem alguem aqui");
+    Game::SetDialog("Assets/preguica_dialog.png", "Preguiça", "Oh, tem alguem aqui");
     Game::ShowDialog(true);
 }
 
@@ -52,20 +52,21 @@ void Preguica::Update(float dt)
         }
         else if (dialogTimer.Get() > 3 && dialogTimer.Get() < 3.2f)
         {
-            Game::SetDialog("Assets/preguica_dialog.png", "Preguica", "Tem como esperar? estou tirando um cochilo");
+            Game::SetDialog("Preguiça", "Tem como esperar? estou tirando um cochilo");
+            Game::ShowDialog(true);
         }
 
         if (!player_go.expired())
         {
-        Vec2 player_pos = player_go.lock()->box.GetCenter();
-        Vec2 distance = player_pos - this->associated.lock()->box.GetCenter();
+            Vec2 player_pos = player_go.lock()->box.GetCenter();
+            Vec2 distance = player_pos - this->associated.lock()->box.GetCenter();
         }
         if (hp < 4999)
         {
             hp = 5000;
             fase = CIRCULO;
             dialogTimer.Restart();
-            Game::SetDialog("Assets/preguica_dialog.png", "Preguica", "Que deselegante, me acordou!");
+            Game::SetDialog("Preguiça", "Que deselegante, me acordou!");
             Game::ShowDialog(true);
         }
         break;
@@ -87,7 +88,7 @@ void Preguica::Update(float dt)
             associated.lock()->box.y = 100;
 
             dialogTimer.Restart();
-            Game::SetDialog("Assets/preguica_dialog.png", "Preguica", "Minions, acabem com ele!");
+            Game::SetDialog("Preguiça", "Minions, acabem com ele!");
             Game::ShowDialog(true);
 
             break;
@@ -116,7 +117,7 @@ void Preguica::Update(float dt)
                 Vec2 distance = player_pos - spawn;
 
                 angle = distance.getAngle();
-                Bullet *bullet = new RegularBullet(bulletPtr, angle, 500, 10, 1000, "Assets/Luxuria_bullet.png", true);
+                Bullet *bullet = new RegularBullet(bulletPtr, angle, 500, 10, 1000, "Assets/Tiro_Preguica.png", true);
                 bulletGO->AddComponent(bullet);
                 shootCooldown.Restart();
             }
@@ -141,7 +142,7 @@ void Preguica::Update(float dt)
             fase = TIRO;
 
             dialogTimer.Restart();
-            Game::SetDialog("Assets/preguica_dialog.png", "Preguica", "Se quer algo bem feito, faca voce mesmo!");
+            Game::SetDialog("Preguiça", "Se quer algo bem feito, faça você mesmo!");
             Game::ShowDialog(true);
 
             break;
@@ -198,7 +199,7 @@ void Preguica::Update(float dt)
             fase = MORRENDO;
             hp = 5000;
             dialogTimer.Restart();
-            Game::SetDialog("Assets/preguica_dialog.png", "Preguica", "Nunca vou te perdoaaaaar...");
+            Game::SetDialog("Preguiça", "Dormir para sempre não parece tão ruim...");
             Game::ShowDialog(true);
         }
 
@@ -228,7 +229,7 @@ void Preguica::Update(float dt)
                 Vec2 distance = player_pos - this->associated.lock()->box.GetCenter();
 
                 float angle = distance.getAngle();
-                Bullet *bullet = new RegularBullet(bulletPtr, angle, 500, 10, 1000, "Assets/Luxuria_bullet.png", true);
+                Bullet *bullet = new RegularBullet(bulletPtr, angle, 500, 10, 1000, "Assets/Tiro_Preguica.png", true);
                 bulletGO->AddComponent(bullet);
                 shootCooldown.Restart();
             }
