@@ -57,7 +57,7 @@ void Preguica::Update(float dt)
         else if (dialogTimer.Get() > 3 && dialogTimer.Get() < 3.2f)
         {
             Game::ShowDialog(false);
-            Game::SetDialog("Preguiça", "Tem como esperar? estou tirando um cochilo");
+            Game::SetDialog("Assets/preguica_dialog1.png", "Preguiça", "Tem como esperar? estou tirando um cochilo");
             Game::ShowDialog(true);
         }
 
@@ -71,7 +71,7 @@ void Preguica::Update(float dt)
             hp = 5000;
             fase = CIRCULO;
             dialogTimer.Restart();
-            Game::SetDialog("Preguiça", "Que deselegante, me acordou!");
+            Game::SetDialog("Assets/preguica_dialog.png", "Preguiça", "Que deselegante, me acordou!");
             Game::ShowDialog(true);
             idleMusic.Stop();
             batalhaMusic.Play();
@@ -95,7 +95,7 @@ void Preguica::Update(float dt)
             associated.lock()->box.y = 100;
 
             dialogTimer.Restart();
-            Game::SetDialog("Preguiça", "Minions, acabem com ele!");
+            Game::SetDialog("Assets/preguica_dialog1.png", "Preguiça", "Minions, acabem com ele!");
             Game::ShowDialog(true);
 
             break;
@@ -149,7 +149,7 @@ void Preguica::Update(float dt)
             fase = TIRO;
 
             dialogTimer.Restart();
-            Game::SetDialog("Preguiça", "Se quer algo bem feito, faça você mesmo!");
+            Game::SetDialog("Assets/preguica_dialog.png", "Preguiça", "Se quer algo bem feito, faça você mesmo!");
             Game::ShowDialog(true);
 
             break;
@@ -206,7 +206,7 @@ void Preguica::Update(float dt)
             fase = MORRENDO;
             hp = 5000;
             dialogTimer.Restart();
-            Game::SetDialog("Preguiça", "Dormir para sempre não parece tão ruim...");
+            Game::SetDialog("Assets/preguica_dialog1.png", "Preguiça", "Dormir para sempre não parece tão ruim...");
             Game::ShowDialog(true);
         }
 

@@ -49,7 +49,7 @@ void Luxuria::Update(float dt)
 
     if (falasTimer.Get() > 15)
     {
-        Game::SetDialog("Luxúria", "Não vou perder para voce. Afinal, não posso aceitar que a escala 6x1 de trabalho volte");
+        Game::SetDialog("Assets/luxuria_dialog2.png", "Luxúria", "Não vou perder para voce. Afinal, não posso aceitar que a escala 6x1 de trabalho volte");
         Game::ShowDialog(true);
     }
 
@@ -60,7 +60,7 @@ void Luxuria::Update(float dt)
 
     if (falasTimer.Get() > 30)
     {
-        Game::SetDialog("Luxúria", "Sinto muito querido. Se quiser seu amuleto vai ter que pegar a força. Muita forca >:)");
+        Game::SetDialog("Assets/luxuria_dialog1.png", "Luxúria", "Sinto muito querido. Se quiser seu amuleto vai ter que pegar a força. Muita forca >:)");
         Game::ShowDialog(true);
     }
 
