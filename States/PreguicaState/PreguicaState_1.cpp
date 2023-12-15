@@ -133,6 +133,16 @@ PreguicaState_1::PreguicaState_1()
     go->box.x = 4;
     go->box.y = 56;
 
+
+    go = new GameObject();
+    go->Depth = Dynamic;
+    Sprite *npc = new Sprite("Assets/npc.png", this->AddObject(go));
+    npc->SetScaleX(3, 3);
+    go->AddComponent(npc);
+    go->box.x = 1077;
+    go->box.y = 967;
+
+
     for (auto &pos : pos_pinheiros_1)
     {
         go = new GameObject();
