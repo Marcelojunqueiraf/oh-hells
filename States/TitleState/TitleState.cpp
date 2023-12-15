@@ -11,6 +11,8 @@
 
 TitleState::TitleState()
 {
+
+    // backgroundMusic = new Music("Assets/Eli_memoria.ogg");
     auto bg = new GameObject;
     auto bg_ptr = AddObject(bg);
     bg->AddComponent(new Sprite("Assets/main_menu.png", bg_ptr));
@@ -64,15 +66,18 @@ void TitleState::Render()
 
 void TitleState::Start()
 {
-    Game::ResumeMusic();
+    // Game::ResumeMusic();
+    // backgroundMusic->Play(-1);
     StartArray();
 }
 
 void TitleState::Pause()
 {
+    // backgroundMusic->Pause();
 }
 
 void TitleState::Resume()
 {
+    // backgroundMusic->Resume();
     Camera::GetInstance().pos = Vec2(0, 0);
 }

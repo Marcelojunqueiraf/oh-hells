@@ -245,6 +245,7 @@ void PreguicaState_1::Start()
 {
     StartArray();
     LoadAssets();
+    Game::ResumeMusic();                      // Continua a musica anterior
     Camera::GetInstance().SetView(game_view); // Seta com o tamanho da imagem
     Camera::GetInstance().Follow(player_goPtr);
 }

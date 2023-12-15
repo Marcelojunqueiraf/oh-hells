@@ -3,12 +3,14 @@
 #include "../State/State.hpp"
 #include "../../Componentes/Text/Text.hpp"
 #include "../../Utils/Timer/Timer.hpp"
+#include "../../Music/Music.hpp"
 
 #define MENU_SIZE 2
 
 class TitleState : public State {
 public:
     bool key_pressed = false;
+    Music * backgroundMusic;
     Text * txt_start;  
     Timer key_delay;
     TitleState();
