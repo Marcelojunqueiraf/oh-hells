@@ -4,14 +4,15 @@
 #include "../../Componentes/Preguica/Preguica.hpp"
 #include "../../Componentes/Player/Player.hpp"
 
-class PreguicaState_1 : public State {
+class PreguicaState_1 : public State
+{
 public:
     PreguicaState_1();
     ~PreguicaState_1();
 
-    void LoadAssets () override;
-    void Update (float dt) override;
-    void Render () override;
+    void LoadAssets() override;
+    void Update(float dt) override;
+    void Render() override;
 
     void Start() override;
     void Pause() override;
@@ -19,8 +20,6 @@ public:
 
 private:
     Rect game_view;
-    Music& backgroundMusic;
-    Player * player;
+    Player *player;
     std::weak_ptr<GameObject> player_goPtr;
-
 };

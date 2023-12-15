@@ -19,7 +19,7 @@ static std::array<Vec2, 7> pos_pilar_1 =
         Vec2(1152.0, 1164.0),
 };
 
-PreguicaState::PreguicaState() //: backgroundMusic(Game::GetInstance()->backgroundMusic)
+PreguicaState::PreguicaState()
 {
     GameObject *go = new GameObject();
     std::weak_ptr<GameObject> goPtr = this->AddObject(go);
@@ -107,13 +107,11 @@ PreguicaState::PreguicaState() //: backgroundMusic(Game::GetInstance()->backgrou
 
 PreguicaState::~PreguicaState()
 {
-    backgroundMusic.Stop();
     objectArray.clear();
 }
 
 void PreguicaState::LoadAssets()
 {
-    backgroundMusic.Open("Assets/musicapreguica_ambiente.ogg");
 }
 
 void PreguicaState::Update(float dt)
@@ -160,8 +158,6 @@ void PreguicaState::Start()
     LoadAssets();
     dialogCooldown.Restart();
 
-    backgroundMusic.Play();
-    backgroundMusic.Resume();                 // Continua a musica anterior
     Camera::GetInstance().SetView(game_view); // Seta com o tamanho da imagem
     Camera::GetInstance().Follow(player_goPtr);
 }
@@ -169,12 +165,12 @@ void PreguicaState::Start()
 void PreguicaState::Pause()
 {
     Camera::GetInstance().Unfollow();
-    backgroundMusic.Pause();
+    // Game::PauseMusic();
 }
 
 void PreguicaState::Resume()
 {
-    backgroundMusic.Resume();
+    // Game::ResumeMusic();
     Camera::GetInstance().SetView(game_view); // Seta com o tamanho da imagem
     Camera::GetInstance().Follow(player_goPtr);
 }

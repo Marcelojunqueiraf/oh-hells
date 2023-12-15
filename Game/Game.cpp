@@ -77,6 +77,9 @@ Game::Game(std::string title, int width, int height)
   this->renderer = std::shared_ptr<SDL_Renderer>(renderer, SDL_DestroyRenderer);
 
   frameStart = SDL_GetTicks();
+  this->backgroundMusic = Music("Assets/Eli_mundo.ogg");
+  this->backgroundMusic.Play(-1);
+  this->backgroundMusic.Pause();
 }
 
 Game *Game::GetInstance()
@@ -109,6 +112,7 @@ void Game::Run()
     {
       if (stateStack.top()->PopRequested())
       {
+      std:
         stateStack.pop();
         // Resources::ClearResources();
         if (!stateStack.empty())
@@ -274,4 +278,14 @@ void Game::ShowDialog(bool show)
     dialogSound->Stop();
 
   Game::show_dialog = show;
+}
+
+void Game::PauseMusic()
+{
+  instance->backgroundMusic.Pause();
+}
+
+void Game::ResumeMusic()
+{
+  instance->backgroundMusic.Resume();
 }

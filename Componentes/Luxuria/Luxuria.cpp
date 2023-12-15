@@ -28,8 +28,6 @@ Luxuria::Luxuria(std::weak_ptr<GameObject> associated, int hp, std::weak_ptr<Gam
     hit_animation->show = false;
     last_animation = idle_animation;
 
-    music_playing = true;
-
     Game::SetDialog("Assets/luxuria_dialog.png", "Luxúria", "Ah, o meu convidado especial chegou! Fique à vontade. Quer um drink ou algo do tipo?");
     Game::ShowDialog(true);
 }
@@ -40,7 +38,6 @@ Luxuria::~Luxuria()
 
 void Luxuria::Update(float dt)
 {
-
     hitTimer.Update(dt);
     shootCooldown.Update(dt);
     falasTimer.Update(dt);
@@ -110,11 +107,6 @@ void Luxuria::Update(float dt)
                 // Bullet *bullet = new RegularBullet(bulletPtr, angle, 500, 10, 1000, "Assets/Luxuria_bullet.png", true);
                 bulletGO->AddComponent(bullet);
                 shootCooldown.Restart();
-            }
-            else if (music_playing)
-            {
-                Game::GetInstance()->backgroundMusic.Stop();
-                music_playing = false;
             }
         }
         break;

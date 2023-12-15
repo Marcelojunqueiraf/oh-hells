@@ -75,6 +75,7 @@
 
 LuxuriaState::LuxuriaState()
 {
+
     GameObject *go = new GameObject();
     std::weak_ptr<GameObject> goPtr = this->AddObject(go);
     Sprite *bg = new Sprite("Assets/fundo.png", goPtr);
@@ -174,7 +175,8 @@ LuxuriaState::~LuxuriaState()
 
 void LuxuriaState::LoadAssets()
 {
-    backgroundMusic.Open("Assets/Luxuria1.ogg");
+    backgroundMusic = Music("Assets/Luxuria1.ogg");
+    // Game::PauseMusic();
 }
 
 void LuxuriaState::Update(float dt)
@@ -193,7 +195,6 @@ void LuxuriaState::Update(float dt)
     /* Verifica aqui se o jogo acabou */
     if (luxuria->GetHp() <= 0)
     {
-        backgroundMusic.Stop();
     }
 
     // if(input_manager.KeyPress(SDLK_0)){
@@ -235,19 +236,20 @@ void LuxuriaState::Start()
     LoadAssets();
 
     backgroundMusic.Play();
+
     Camera::GetInstance().SetView(game_view);
     Camera::GetInstance().Follow(player_goPtr);
 }
 
 void LuxuriaState::Pause()
 {
-    backgroundMusic.Pause();
+
     Camera::GetInstance().Unfollow();
 }
 
 void LuxuriaState::Resume()
 {
-    backgroundMusic.Resume();
+
     Camera::GetInstance().SetView(game_view); // Seta com o tamanho da imagem
     Camera::GetInstance().Follow(player_goPtr);
 }

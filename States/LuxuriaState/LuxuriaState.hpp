@@ -20,8 +20,6 @@ public:
     void Resume() override;
 
 private:
-    Music backgroundMusic;
-
     Dialog *luxuria_dialog;
 
     Luxuria *luxuria;
@@ -29,5 +27,8 @@ private:
 
     Rect game_view;
     Player *player;
+
+    Music backgroundMusic;
+
     std::weak_ptr<GameObject> player_goPtr;
 };

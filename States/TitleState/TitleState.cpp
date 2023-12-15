@@ -9,7 +9,8 @@
 #include "../PreguicaState/PreguicaState_2.hpp"
 #include "../PreguicaState/PreguicaState.hpp"
 
-TitleState::TitleState() {
+TitleState::TitleState()
+{
     auto bg = new GameObject;
     auto bg_ptr = AddObject(bg);
     bg->AddComponent(new Sprite("Assets/main_menu.png", bg_ptr));
@@ -20,53 +21,58 @@ TitleState::TitleState() {
     txt_start = new Text("Assets/Ubuntu-Regular.ttf", txt_start_go_ptr, 40, Text::SOLID, "Start", {0, 0, 0, 255});
     txt_start_go->AddComponent(txt_start);
     Rect &fontLuxuriaBox = txt_start_go->box;
-    fontLuxuriaBox.x = GAME_WIDTH/2 - fontLuxuriaBox.w/2 + 15;
-    fontLuxuriaBox.y = GAME_HEIGHT/2 + 1.7*fontLuxuriaBox.h;
+    fontLuxuriaBox.x = GAME_WIDTH / 2 - fontLuxuriaBox.w / 2 + 30;
+    fontLuxuriaBox.y = GAME_HEIGHT / 2 + 1.7 * fontLuxuriaBox.h - 10;
 }
 
-TitleState::~TitleState() {
-
+TitleState::~TitleState()
+{
 }
 
-void TitleState::LoadAssets() {
-
+void TitleState::LoadAssets()
+{
 }
 
-void TitleState::Update(float dt) {
+void TitleState::Update(float dt)
+{
     key_delay.Update(dt);
     InputManager &input = InputManager::GetInstance();
     quitRequested = input.QuitRequested();
     popRequested = input.KeyPress(ESCAPE_KEY);
 
-    if (input.KeyPress(SDLK_SPACE) || input.KeyPress(SDLK_RETURN)) {
+    if (input.KeyPress(SDLK_SPACE) || input.KeyPress(SDLK_RETURN))
+    {
         txt_start->SetColor({255, 0, 0, 255});
         key_pressed = true;
         key_delay.Restart();
     }
 
-    if(key_pressed && key_delay.Get()>0.3f){
+    if (key_pressed && key_delay.Get() > 0.3f)
+    {
         key_pressed = false;
         txt_start->SetColor({0, 0, 0, 255});
         Game::GetInstance()->Push(new PreguicaState_1());
-        // Game::GetInstance()->Push(new LuxuriaState());
     }
 
     UpdateArray(dt);
 }
 
-
-void TitleState::Render() {
+void TitleState::Render()
+{
     RenderArray();
 }
 
-void TitleState::Start() {
+void TitleState::Start()
+{
+    Game::ResumeMusic();
     StartArray();
 }
 
-void TitleState::Pause() {
-
+void TitleState::Pause()
+{
 }
 
-void TitleState::Resume() {
+void TitleState::Resume()
+{
     Camera::GetInstance().pos = Vec2(0, 0);
 }

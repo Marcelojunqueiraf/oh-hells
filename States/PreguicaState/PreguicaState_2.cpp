@@ -57,7 +57,7 @@ static std::array<Vec2, 18> pos_arv_seca_1 =
         Vec2(100.0, 1328.0),
         Vec2(76.0, 856.0)};
 
-PreguicaState_2::PreguicaState_2() : backgroundMusic(Game::GetInstance()->backgroundMusic)
+PreguicaState_2::PreguicaState_2()
 {
     GameObject *go = new GameObject();
     std::weak_ptr<GameObject> goPtr = this->AddObject(go);
@@ -197,21 +197,20 @@ void PreguicaState_2::Start()
 {
     StartArray();
     LoadAssets();
-    // backgroundMusic.Play();
-    backgroundMusic.Resume();                 // Continua a musica anterior
+    Game::ResumeMusic();                      // Continua a musica anterior
     Camera::GetInstance().SetView(game_view); // Seta com o tamanho da imagem
     Camera::GetInstance().Follow(player_goPtr);
 }
 
 void PreguicaState_2::Pause()
 {
-    backgroundMusic.Pause();
+    // Game::PauseMusic();
     Camera::GetInstance().Unfollow();
 }
 
 void PreguicaState_2::Resume()
 {
-    backgroundMusic.Resume();
+    // Game::ResumeMusic();
     Camera::GetInstance().SetView(game_view); // Seta com o tamanho da imagem
     Camera::GetInstance().Follow(player_goPtr);
 }

@@ -41,7 +41,6 @@ public:
 private:
     int hp;
     std::weak_ptr<GameObject> player_go;
-    bool music_playing = false;
 
     Sprite *idle_animation, *hit_animation, *shooting_animation;
     Timer shootCooldown;

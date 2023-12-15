@@ -46,6 +46,8 @@ private:
     Sprite *idle_animation, *hit_animation;
     int currentPosition;
 
+    Music idleMusic, batalhaMusic;
+
     float shootAngle;
     FASES fase;
 };

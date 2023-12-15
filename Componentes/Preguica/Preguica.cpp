@@ -16,6 +16,9 @@ Vec2 positions[] = {
 Preguica::Preguica(std::weak_ptr<GameObject> associated, int hp, std::weak_ptr<GameObject> player_go) : Component(associated),
                                                                                                         hp(5000), currentPosition(0), player_go(player_go), fase(ESPERANDO), shootAngle(0)
 {
+    idleMusic = Music("Assets/musicapreguica_ambiente.ogg");
+    batalhaMusic = Music("Assets/musicapreguicabatalha.ogg");
+
     // hit_animation = new Sprite("Assets/Luxuria_front_hit.png", associated, 6, 0.1);
     // hit_animation->SetScaleX(3, 3);
     idle_animation = new Sprite("Assets/Preguica_idle.png", associated);
@@ -30,6 +33,7 @@ Preguica::Preguica(std::weak_ptr<GameObject> associated, int hp, std::weak_ptr<G
     hitTimer = Timer();
     dialogTimer = Timer();
 
+    idleMusic.Play();
     Game::SetDialog("Assets/preguica_dialog.png", "Preguiça", "Oh, tem alguem aqui");
     Game::ShowDialog(true);
 }
@@ -52,7 +56,9 @@ void Preguica::Update(float dt)
         }
         else if (dialogTimer.Get() > 3 && dialogTimer.Get() < 3.2f)
         {
+            Game::ShowDialog(false);
             Game::SetDialog("Preguiça", "Tem como esperar? estou tirando um cochilo");
+            Game::ShowDialog(true);
         }
 
         if (!player_go.expired())
@@ -67,6 +73,8 @@ void Preguica::Update(float dt)
             dialogTimer.Restart();
             Game::SetDialog("Preguiça", "Que deselegante, me acordou!");
             Game::ShowDialog(true);
+            idleMusic.Stop();
+            batalhaMusic.Play();
         }
         break;
     }
@@ -228,7 +236,7 @@ void Preguica::Update(float dt)
                 Vec2 distance = player_pos - this->associated.lock()->box.GetCenter();
 
                 float angle = distance.getAngle();
-                Bullet *bullet = new RegularBullet(bulletPtr, angle, 500, 10, 1000, "Assets/Tiro_Preguica1.png", true);
+                Bullet *bullet = new RegularBullet(bulletPtr, angle, 500, 10, 1000, "Assets/Tiro_Preguica.png", true);
                 bulletGO->AddComponent(bullet);
                 shootCooldown.Restart();
             }
@@ -250,6 +258,8 @@ void Preguica::Update(float dt)
         playerSprite->SetScaleX(currentScale.x * 0.99, currentScale.y * 0.99);
 
         hp -= 2000 * dt;
+
+        batalhaMusic.Stop();
         break;
     }
     }

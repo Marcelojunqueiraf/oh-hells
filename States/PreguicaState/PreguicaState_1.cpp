@@ -62,7 +62,7 @@ static std::array<Vec2, 8> pos_arv_seca_1 =
         Vec2(1420.0, 1588.0),
         Vec2(1612.0, 1580.0)};
 
-PreguicaState_1::PreguicaState_1() : backgroundMusic(Game::GetInstance()->backgroundMusic)
+PreguicaState_1::PreguicaState_1()
 {
     GameObject *go = new GameObject();
     std::weak_ptr<GameObject> goPtr = this->AddObject(go);
@@ -80,31 +80,30 @@ PreguicaState_1::PreguicaState_1() : backgroundMusic(Game::GetInstance()->backgr
     go->box = {1780, 880, 10, 800};
     goPtr = this->AddObject(go);
     go->AddComponent(new ActionCollider(goPtr, {1, 1}, Vec2(0, 0), this,
-        [](State *state, std::weak_ptr<GameObject> other)
-        {
-            Player *player = (Player *)other.lock()->GetComponent("Player").lock().get();
-            if (player)
-            {
-                player->SetPosition(1647, 1270);
-                Game::GetInstance()->Push(new PreguicaState_2());
-            }
-        }
-    ));
+                                        [](State *state, std::weak_ptr<GameObject> other)
+                                        {
+                                            Player *player = (Player *)other.lock()->GetComponent("Player").lock().get();
+                                            if (player)
+                                            {
+                                                player->SetPosition(1647, 1270);
+                                                Game::GetInstance()->Push(new PreguicaState_2());
+                                            }
+                                        }));
 
     // Teleporte de mapa
     go = new GameObject();
     go->box = {37, 60, 150, 215};
     goPtr = this->AddObject(go);
     go->AddComponent(new ActionCollider(goPtr, {1, 1}, Vec2(0, 0), this,
-    [](State *state, std::weak_ptr<GameObject> other)
-    {
-        Player *player = (Player *)other.lock()->GetComponent("Player").lock().get();
-        if (player)
-        {
-            player->SetPosition(167, 250);
-            Game::GetInstance()->Push(new LuxuriaState());
-        }
-    }));
+                                        [](State *state, std::weak_ptr<GameObject> other)
+                                        {
+                                            Player *player = (Player *)other.lock()->GetComponent("Player").lock().get();
+                                            if (player)
+                                            {
+                                                player->SetPosition(167, 230);
+                                                Game::GetInstance()->Push(new LuxuriaState());
+                                            }
+                                        }));
 
     // Seta a camera pra ter um limite maximo de visao
     game_view = {0, 0, (float)bg->GetWidth(), (float)bg->GetHeight()};
@@ -175,7 +174,6 @@ PreguicaState_1::~PreguicaState_1()
 
 void PreguicaState_1::LoadAssets()
 {
-    backgroundMusic.Open("Assets/Eli_memoria.ogg");
 }
 
 void PreguicaState_1::Update(float dt)
@@ -187,9 +185,6 @@ void PreguicaState_1::Update(float dt)
     quitRequested = input_manager.QuitRequested();
 
     // popRequested = input_manager.KeyPress(ESCAPE_KEY);
-
-    if (popRequested)
-        backgroundMusic.Stop();
 
     UpdateArray(dt);
 
@@ -225,7 +220,6 @@ void PreguicaState_1::Start()
 {
     StartArray();
     LoadAssets();
-    backgroundMusic.Play();
     Camera::GetInstance().SetView(game_view); // Seta com o tamanho da imagem
     Camera::GetInstance().Follow(player_goPtr);
 }
@@ -233,12 +227,12 @@ void PreguicaState_1::Start()
 void PreguicaState_1::Pause()
 {
     Camera::GetInstance().Unfollow();
-    backgroundMusic.Pause();
+    // Game::PauseMusic();
 }
 
 void PreguicaState_1::Resume()
 {
-    backgroundMusic.Resume();
+    // Game::ResumeMusic();
     Camera::GetInstance().SetView(game_view); // Seta com o tamanho da imagem
     Camera::GetInstance().Follow(player_goPtr);
 }
