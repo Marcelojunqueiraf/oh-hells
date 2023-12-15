@@ -53,7 +53,6 @@ void Preguica::Update(float dt)
         else if (dialogTimer.Get() > 3 && dialogTimer.Get() < 3.2f)
         {
             Game::SetDialog("Preguiça", "Tem como esperar? estou tirando um cochilo");
-            Game::ShowDialog(true);
         }
 
         if (!player_go.expired())
@@ -75,7 +74,7 @@ void Preguica::Update(float dt)
     {
         shootCooldown.Update(dt);
 
-        if (dialogTimer.Get() > 2)
+        if (dialogTimer.Get() > 4)
         {
             Game::ShowDialog(false);
         }
@@ -178,7 +177,7 @@ void Preguica::Update(float dt)
     case TIRO:
     {
 
-        if (dialogTimer.Get() > 2)
+        if (dialogTimer.Get() > 4)
         {
             Game::ShowDialog(false);
         }
