@@ -95,15 +95,15 @@ PreguicaState_1::PreguicaState_1()
     go->box = {37, 60, 150, 215};
     goPtr = this->AddObject(go);
     go->AddComponent(new ActionCollider(goPtr, {1, 1}, Vec2(0, 0), this,
-                                        [](State *state, std::weak_ptr<GameObject> other)
-                                        {
-                                            Player *player = (Player *)other.lock()->GetComponent("Player").lock().get();
-                                            if (player)
-                                            {
-                                                player->SetPosition(167, 230);
-                                                Game::GetInstance()->Push(new LuxuriaState());
-                                            }
-                                        }));
+    [](State *state, std::weak_ptr<GameObject> other)
+    {
+        Player *player = (Player *)other.lock()->GetComponent("Player").lock().get();
+        if (player)
+        {
+            player->SetPosition(167, 230);
+            Game::GetInstance()->Push(new LuxuriaState());
+        }
+    }));
 
     // Seta a camera pra ter um limite maximo de visao
     game_view = {0, 0, (float)bg->GetWidth(), (float)bg->GetHeight()};
@@ -134,14 +134,29 @@ PreguicaState_1::PreguicaState_1()
     go->box.y = 56;
 
 
+
+
     go = new GameObject();
-    go->Depth = Dynamic;
-    Sprite *npc = new Sprite("Assets/npc.png", this->AddObject(go));
-    npc->SetScaleX(3, 3);
-    go->AddComponent(npc);
     go->box.x = 1077;
     go->box.y = 967;
-
+    go->Depth = Dynamic;
+    goPtr = this->AddObject(go);
+    go->AddComponent(new ActionCollider(goPtr, {1, 1}, Vec2(0, 0), this,
+    [](State *state, std::weak_ptr<GameObject> other)
+    {
+        Player *player = (Player *)other.lock()->GetComponent("Player").lock().get();
+        if (player)
+        {
+            if(!(((PreguicaState_1*)state)->npc_talked)){
+                Game::SetDialog("Assets/null.png", "Soberba", "Termine seus afazeres, vou marcar na minha agenda um bate-papo.");
+                Game::ShowDialog(true);
+                ((PreguicaState_1*)state)->npc_talked = true;
+            }
+        }
+    }));
+    Sprite *npc = new Sprite("Assets/npc.png", goPtr);
+    npc->SetScaleX(3, 3);
+    go->AddComponent(npc);
 
     for (auto &pos : pos_pinheiros_1)
     {

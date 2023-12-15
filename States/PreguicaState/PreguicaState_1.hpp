@@ -19,6 +19,7 @@ public:
     void Resume() override;
 
 private:
+    bool npc_talked = false;
     Rect game_view;
     Player *player;
     std::weak_ptr<GameObject> player_goPtr;
