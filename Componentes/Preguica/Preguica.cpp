@@ -228,7 +228,7 @@ void Preguica::Update(float dt)
                 Vec2 distance = player_pos - this->associated.lock()->box.GetCenter();
 
                 float angle = distance.getAngle();
-                Bullet *bullet = new RegularBullet(bulletPtr, angle, 500, 10, 1000, "Assets/Tiro_Preguica.png", true);
+                Bullet *bullet = new RegularBullet(bulletPtr, angle, 500, 10, 1000, "Assets/Tiro_Preguica1.png", true);
                 bulletGO->AddComponent(bullet);
                 shootCooldown.Restart();
             }
